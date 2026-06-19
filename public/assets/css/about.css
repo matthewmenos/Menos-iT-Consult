@@ -1,0 +1,73 @@
+/* ─────────────────────────────────────────────
+   about.css — about.html only
+   Values grid · Timeline · Team
+   ───────────────────────────────────────────── */
+
+/* ── core values grid ── */
+.values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 8px; }
+.value-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 16px;
+  padding: 28px 22px; text-align: center;
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s, border-color .3s;
+}
+.value-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(26,86,219,.1); border-color: var(--blue-mid); }
+.val-icon {
+  width: 52px; height: 52px; border-radius: 14px; background: var(--blue-bg); color: var(--blue);
+  display: grid; place-items: center; margin: 0 auto 16px;
+}
+.val-icon svg { width: 26px; height: 26px; }
+.value-card h3 { font-size: .95rem; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+.value-card p  { font-size: .83rem; color: var(--muted); line-height: 1.6; }
+
+/* ── timeline ── */
+.timeline {
+  max-width: 640px; margin: 0 auto; position: relative; padding-left: 28px;
+}
+.timeline::before {
+  content: ''; position: absolute; left: 8px; top: 8px; bottom: 8px;
+  width: 2px; background: var(--border); border-radius: 2px;
+}
+.tl-item {
+  position: relative; margin-bottom: 40px;
+}
+.tl-item::before {
+  content: ''; position: absolute; left: -24px; top: 6px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--blue); border: 3px solid var(--blue-bg);
+  box-shadow: 0 0 0 2px var(--blue);
+}
+.tl-year { font-size: .78rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+.tl-body h4 { font-size: .95rem; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+.tl-body p  { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+/* ── team grid ── */
+.team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.team-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 18px;
+  padding: 28px 22px; text-align: center;
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s;
+}
+.team-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(0,0,0,.09); }
+.team-av {
+  width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 16px;
+  background: linear-gradient(135deg, hsl(var(--h),60%,40%), hsl(var(--h),60%,60%));
+  color: #fff; font-size: 1.2rem; font-weight: 700; display: grid; place-items: center;
+}
+.team-card h3   { font-size: .95rem; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+.team-card .role { font-size: .8rem; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
+.team-card p    { font-size: .82rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+.team-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.team-tags span {
+  font-size: .72rem; font-weight: 600; padding: 3px 9px; border-radius: 100px;
+  background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-mid);
+}
+
+/* ── about responsive ── */
+@media (max-width: 1024px) {
+  .values-grid { grid-template-columns: repeat(2, 1fr); }
+  .team-grid   { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .values-grid { grid-template-columns: 1fr; }
+  .team-grid   { grid-template-columns: 1fr; }
+}

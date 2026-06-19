@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog &amp; Insights — Menos iT Consult</title>
+  <meta name="description" content="Practical IT tips and insights for small businesses in Ghana — from Menos iT Consult." />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/blog.css" />
+</head>
+<body>
+
+  <!-- preloader -->
+  <div class="preloader" id="preloader">
+    <div class="pl-logo">
+      <span class="logo-icon" style="width:48px;height:48px;font-size:1.5rem;border-radius:12px;">M</span>
+    </div>
+    <div class="pl-bar"><div class="pl-fill"></div></div>
+  </div>
+
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo"><span class="logo-icon">M</span><span>Menos <em>iT</em> Consult</span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="../index.html"        data-page="index">Home</a>
+        <a href="about.html"        data-page="about">About</a>
+        <a href="services.html"     data-page="services">Services</a>
+        <a href="portfolio.html"    data-page="portfolio">Portfolio</a>
+        <a href="testimonials.html" data-page="testimonials">Testimonials</a>
+        <a href="blog.html"         data-page="blog">Blog</a>
+        <a href="contact.html"      data-page="contact">Contact</a>
+      </nav>
+      <a href="contact.html" class="btn btn-nav">Get Started</a>
+      <button class="burger" id="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="drawer" id="drawer">
+    <a href="../index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="testimonials.html">Testimonials</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="btn btn-primary">Get Started</a>
+  </div>
+
+  <main class="page-transition">
+
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb reveal"><a href="../index.html">Home</a> <span>/</span> Blog &amp; Insights</div>
+        <h1 class="reveal">Blog &amp; Insights</h1>
+        <p class="reveal">Practical IT advice, industry news, and tips written for small business owners in Ghana.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+
+        <!-- featured post -->
+        <a href="#" class="blog-featured reveal">
+          <div class="bf-visual">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4L6 12v12c0 11 8 20 18 22 10-2 18-11 18-22V12L24 4z"/><path d="M17 24l5 5 9-9"/></svg>
+          </div>
+          <div class="bf-body">
+            <span class="bf-cat">Cybersecurity</span>
+            <h2>5 Cybersecurity Mistakes Small Businesses in Ghana Make — And How to Fix Them</h2>
+            <p>Most small business owners think hackers only go after big companies. The reality is very different — and the consequences of a breach for a small business can be devastating. We break down the five most common mistakes we see and exactly what to do about each one.</p>
+            <div class="bf-meta">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 7 min read</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> June 2025</span>
+              <span>By Menos iT Consult</span>
+            </div>
+            <span class="bf-read">Read article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+          </div>
+        </a>
+
+        <!-- main layout -->
+        <div class="blog-layout">
+
+          <!-- article grid -->
+          <div>
+            <!-- category filter -->
+            <div class="blog-filters reveal" id="blogFilters">
+              <button class="blog-filter active" data-filter="all">All</button>
+              <button class="blog-filter" data-filter="security">Cybersecurity</button>
+              <button class="blog-filter" data-filter="cloud">Cloud</button>
+              <button class="blog-filter" data-filter="network">Network</button>
+              <button class="blog-filter" data-filter="webdev">Web Dev</button>
+              <button class="blog-filter" data-filter="software">Software</button>
+              <button class="blog-filter" data-filter="business">Business IT</button>
+              <button class="blog-filter" data-filter="tips">Quick Tips</button>
+            </div>
+
+            <div class="blog-grid" id="blogGrid">
+
+              <a href="#" class="blog-card reveal" data-cat="cloud">
+                <div class="bc-visual">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32a10 10 0 0 1 0-20 12 12 0 0 1 23.4-3A10 10 0 0 1 40 28"/><path d="M20 36v-10M28 36v-10M16 32l4-4 4 4M24 32l4-4 4 4"/></svg>
+                  <span class="bc-cat cat-cloud">Cloud</span>
+                </div>
+                <div class="bc-body">
+                  <div class="bc-meta">
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 5 min</span>
+                    <span>May 2025</span>
+                  </div>
+                  <h3>Is Your Business Ready to Move to the Cloud? A 5-Point Checklist</h3>
+                  <p>Cloud migration isn't right for every business at every moment. Use this checklist to work out whether now is the right time — and what to sort out first.</p>
+                  <span class="bc-read">Read <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </div>
+              </a>
+
+              <a href="#" class="blog-card reveal" data-cat="network">
+                <div class="bc-visual">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="40" height="28" rx="3"/><path d="M16 40h16M24 36v4"/><path d="M4 28h40"/></svg>
+                  <span class="bc-cat">Network</span>
+                </div>
+                <div class="bc-body">
+                  <div class="bc-meta">
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 4 min</span>
+                    <span>April 2025</span>
+                  </div>
+                  <h3>Why Your Office Wi-Fi Is Slow — And the Simple Fixes That Actually Work</h3>
+                  <p>Slow Wi-Fi kills productivity. Before you blame your internet provider, check these common culprits — most can be fixed without spending a cedis.</p>
+                  <span class="bc-read">Read <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </div>
+              </a>
+
+              <a href="#" class="blog-card reveal" data-cat="business">
+                <div class="bc-visual">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="36" height="28" rx="3"/><path d="M6 18h36M18 34v8M30 34v8M14 42h20"/></svg>
+                  <span class="bc-cat cat-business">Business IT</span>
+                </div>
+                <div class="bc-body">
+                  <div class="bc-meta">
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 6 min</span>
+                    <span>April 2025</span>
+                  </div>
+                  <h3>How Much Should a Small Business Spend on IT? A Practical Guide</h3>
+                  <p>There's no single right answer — but there is a framework. We walk through how to think about IT spending at different stages of business growth.</p>
+                  <span class="bc-read">Read <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </div>
+              </a>
+
+              <a href="#" class="blog-card reveal" data-cat="webdev">
+                <div class="bc-visual">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="40" height="32" rx="3"/><path d="M4 14h40"/><path d="M16 26l-6 3 6 3M32 26l6 3-6 3M22 34l4-12"/></svg>
+                  <span class="bc-cat cat-webdev">Web Dev</span>
+                </div>
+                <div class="bc-body">
+                  <div class="bc-meta">
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 5 min</span>
+                    <span>March 2025</span>
+                  </div>
+                  <h3>Does Your Business Actually Need a Website in 2025? (Yes — Here's Why)</h3>
+                  <p>WhatsApp and Facebook pages are useful, but they don't replace a proper website. We explain what you're missing and what a simple site can realistically do for your business.</p>
+                  <span class="bc-read">Read <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </div>
+              </a>
+
+              <a href="#" class="blog-card reveal" data-cat="tips">
+                <div class="bc-visual">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="20" r="12"/><path d="M20 32v4a4 4 0 0 0 8 0v-4"/><path d="M18 20a6 6 0 0 1 12 0"/></svg>
+                  <span class="bc-cat cat-tips">Quick Tips</span>
+                </div>
+                <div class="bc-body">
+                  <div class="bc-meta">
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 3 min</span>
+                    <span>March 2025</span>
+                  </div>
+                  <h3>10 Free Tools Every Small Business Should Be Using Right Now</h3>
+                  <p>You don't need to spend a fortune on software. These free tools cover collaboration, file storage, password management, and more — and they're trusted by businesses worldwide.</p>
+                  <span class="bc-read">Read <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </div>
+              </a>
+
+              <a href="#" class="blog-card reveal" data-cat="software">
+                <div class="bc-visual">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="36" height="40" rx="4"/><path d="M6 16h36"/><path d="M16 26l-6 4 6 4M32 26l6 4-6 4M22 36l4-16"/></svg>
+                  <span class="bc-cat cat-software">Software</span>
+                </div>
+                <div class="bc-body">
+                  <div class="bc-meta">
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 6 min</span>
+                    <span>February 2025</span>
+                  </div>
+                  <h3>When to Build Custom Software vs. Buy Off-the-Shelf</h3>
+                  <p>Custom software sounds expensive — and sometimes it is. But off-the-shelf tools have hidden costs too. Here's how to decide which path makes sense for your business.</p>
+                  <span class="bc-read">Read <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </div>
+              </a>
+
+              <a href="#" class="blog-card reveal" data-cat="security">
+                <div class="bc-visual">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="20" width="20" height="18" rx="2"/><path d="M10 20v-6a14 14 0 0 1 28 0v6"/><circle cx="24" cy="30" r="2" fill="currentColor" stroke="none"/></svg>
+                  <span class="bc-cat cat-security">Cybersecurity</span>
+                </div>
+                <div class="bc-body">
+                  <div class="bc-meta">
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 4 min</span>
+                    <span>January 2025</span>
+                  </div>
+                  <h3>Why "Use a Strong Password" Is Not Enough Anymore — And What to Do Instead</h3>
+                  <p>Passwords alone can't protect your accounts. Multi-factor authentication is the single biggest step most businesses haven't taken yet. Here's how to set it up in under an hour.</p>
+                  <span class="bc-read">Read <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </div>
+              </a>
+
+              <a href="#" class="blog-card reveal" data-cat="business">
+                <div class="bc-visual">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="12" rx="16" ry="5"/><path d="M40 24c0 2.76-7.16 5-16 5S8 26.76 8 24"/><path d="M40 12v24c0 2.76-7.16 5-16 5S8 38.76 8 36V12"/></svg>
+                  <span class="bc-cat cat-business">Business IT</span>
+                </div>
+                <div class="bc-body">
+                  <div class="bc-meta">
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 5 min</span>
+                    <span>December 2024</span>
+                  </div>
+                  <h3>Backup or Bust: Why Most Small Businesses Have No Real Recovery Plan</h3>
+                  <p>Losing your business data isn't a matter of if — it's when. Hard drives fail, ransomware strikes, employees delete the wrong file. Here's how to build a backup system that actually works.</p>
+                  <span class="bc-read">Read <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </div>
+              </a>
+
+              <a href="#" class="blog-card reveal" data-cat="tips">
+                <div class="bc-visual">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4l4 8 9 1.3-6.5 6.4 1.5 9L24 24l-8 4.7 1.5-9L11 13.3 20 12z"/><path d="M8 36h32M12 42h24"/></svg>
+                  <span class="bc-cat cat-tips">Quick Tips</span>
+                </div>
+                <div class="bc-body">
+                  <div class="bc-meta">
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 2 min</span>
+                    <span>November 2024</span>
+                  </div>
+                  <h3>How to Speed Up a Slow Computer in 10 Minutes (No Technical Knowledge Needed)</h3>
+                  <p>Before you buy a new PC, try these quick fixes. In most cases a slow computer just needs a clean-up — not a replacement.</p>
+                  <span class="bc-read">Read <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </div>
+              </a>
+
+              <!-- no-results -->
+              <div class="blog-no-results" id="blogNoResults" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <p style="font-size:.92rem;">No articles in that category yet — check back soon.</p>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- sidebar -->
+          <aside class="blog-sidebar">
+            <div class="sidebar-card">
+              <h4>Get the newsletter</h4>
+              <p>Practical IT tips delivered to your inbox — no spam, unsubscribe any time.</p>
+              <form class="sidebar-nl nl-form" id="blogNlForm">
+                <input type="email" name="email" placeholder="Your email address" required />
+                <button type="submit" class="btn btn-primary btn-full">Subscribe</button>
+              </form>
+            </div>
+            <div class="sidebar-card">
+              <h4>Browse by topic</h4>
+              <nav class="sidebar-cats">
+                <a href="#" data-scat="security">Cybersecurity <span>3</span></a>
+                <a href="#" data-scat="cloud">Cloud <span>1</span></a>
+                <a href="#" data-scat="network">Network <span>1</span></a>
+                <a href="#" data-scat="webdev">Web Dev <span>1</span></a>
+                <a href="#" data-scat="software">Software <span>1</span></a>
+                <a href="#" data-scat="business">Business IT <span>2</span></a>
+                <a href="#" data-scat="tips">Quick Tips <span>2</span></a>
+              </nav>
+            </div>
+            <div class="sidebar-card">
+              <h4>Need help with your IT?</h4>
+              <p>We work with businesses of all sizes across Ghana. Get in touch for a free initial chat.</p>
+              <a href="contact.html" class="btn btn-primary btn-full">Talk to us</a>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="container">
+        <div class="cta-band-inner reveal">
+          <div>
+            <h2>Want advice specific to your business?</h2>
+            <p>Articles only go so far — get in touch and let's talk about your situation.</p>
+          </div>
+          <a href="contact.html" class="btn btn-white">Contact us</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="logo"><span class="logo-icon">M</span><span>Menos <em>iT</em> Consult</span></a>
+          <p>Empowering small businesses in Ghana and beyond through smart, reliable technology solutions.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon fill="currentColor" stroke="none" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg></a>
+            <a href="https://wa.me/233000000000" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col"><h4>Services</h4><ul><li><a href="services.html">Network Design</a></li><li><a href="services.html">Cybersecurity</a></li><li><a href="services.html">Cloud Solutions</a></li><li><a href="services.html">Web Development</a></li><li><a href="services.html">Software Development</a></li><li><a href="services.html">IT Consulting</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="blog.html">Blog</a></li><li><a href="testimonials.html">Testimonials</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Legal</h4><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="cookies.html">Cookie Policy</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Menos iT Consult. All rights reserved.</p>
+        <p>Agona, Western Region, Ghana</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp bubble -->
+  <a href="https://wa.me/233000000000" class="wa-bubble" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+  </a>
+
+  <!-- Cookie consent banner -->
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Cookie consent">
+    <div class="cookie-inner">
+      <p>We use cookies to keep the site working and understand how visitors use it. <a href="cookies.html">Cookie Policy</a></p>
+      <div class="cookie-btns">
+        <button class="btn btn-ghost" id="cookieDecline">Decline</button>
+        <button class="btn btn-primary" id="cookieAccept">Accept</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/script.js"></script>
+  <script>
+    /* blog category filter */
+    (() => {
+      const filters  = document.querySelectorAll('.blog-filter');
+      const cards    = document.querySelectorAll('#blogGrid .blog-card');
+      const noRes    = document.getElementById('blogNoResults');
+      const sideCats = document.querySelectorAll('.sidebar-cats a[data-scat]');
+
+      function applyFilter(cat) {
+        filters.forEach(b => b.classList.toggle('active', b.dataset.filter === cat));
+        let visible = 0;
+        cards.forEach(c => {
+          const show = cat === 'all' || c.dataset.cat === cat;
+          c.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+        noRes.style.display = visible === 0 ? 'block' : 'none';
+      }
+
+      filters.forEach(b => b.addEventListener('click', () => applyFilter(b.dataset.filter)));
+      sideCats.forEach(a => {
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          applyFilter(a.dataset.scat);
+          document.getElementById('blogGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      /* sidebar newsletter — calls shared API handler in script.js */
+    })();
+  </script>
+</body>
+</html>

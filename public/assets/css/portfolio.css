@@ -1,0 +1,153 @@
+/* ─────────────────────────────────────────────
+   portfolio.css — portfolio.html only
+   Filter bar · Project grid · Case-study cards
+   Stats strip · CTA
+   ───────────────────────────────────────────── */
+
+/* ── filter bar ── */
+.pf-filters {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap; margin-bottom: 44px;
+}
+.pf-filter {
+  padding: 8px 18px; border-radius: 100px; font-size: .83rem; font-weight: 600;
+  border: 1.5px solid var(--border); background: #fff; color: var(--muted);
+  cursor: pointer; font-family: inherit; transition: all .2s var(--ease);
+}
+.pf-filter:hover   { border-color: var(--blue-l); color: var(--blue); }
+.pf-filter.active  { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+/* ── project grid ── */
+.pf-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ── project card ── */
+.pf-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 18px;
+  overflow: hidden; display: flex; flex-direction: column;
+  transition: transform .35s var(--ease-out), box-shadow .35s, border-color .3s;
+}
+.pf-card:hover { transform: translateY(-6px); box-shadow: 0 18px 44px rgba(26,86,219,.11); border-color: var(--blue-mid); }
+.pf-card[data-hidden] { display: none; }
+
+/* card visual / mock screenshot */
+.pf-visual {
+  position: relative; height: 200px; overflow: hidden;
+  background: linear-gradient(135deg, var(--blue-bg), var(--blue-mid));
+  display: flex; align-items: center; justify-content: center;
+}
+.pf-visual svg.pf-illustration {
+  width: 100px; height: 100px; color: var(--blue); opacity: .25;
+}
+.pf-tag {
+  position: absolute; top: 14px; left: 14px;
+  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em;
+  padding: 4px 11px; border-radius: 100px;
+  background: var(--blue); color: #fff;
+}
+.pf-tag.tag-security { background: #7c3aed; }
+.pf-tag.tag-cloud    { background: #0891b2; }
+.pf-tag.tag-data     { background: #059669; }
+.pf-tag.tag-support  { background: #b45309; }
+.pf-tag.tag-consult  { background: #dc2626; }
+.pf-tag.tag-webdev   { background: #0f766e; }
+.pf-tag.tag-softdev  { background: #9333ea; }
+
+/* card body */
+.pf-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+.pf-client {
+  font-size: .75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--muted); margin-bottom: 6px;
+}
+.pf-body h3 { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: 10px; line-height: 1.3; }
+.pf-body p  { font-size: .87rem; color: var(--muted); line-height: 1.7; flex: 1; margin-bottom: 20px; }
+
+/* outcome pills */
+.pf-outcomes { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+.pf-outcome {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: .75rem; font-weight: 600; padding: 4px 10px; border-radius: 6px;
+  background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-mid);
+}
+.pf-outcome svg { width: 11px; height: 11px; }
+
+/* card footer */
+.pf-card-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 16px; border-top: 1px solid var(--border);
+}
+.pf-year { font-size: .78rem; color: var(--muted); font-weight: 500; }
+.pf-more {
+  font-size: .82rem; font-weight: 600; color: var(--blue);
+  display: inline-flex; align-items: center; gap: 5px;
+  transition: gap .2s;
+}
+.pf-more svg { width: 14px; height: 14px; }
+.pf-card:hover .pf-more { gap: 9px; }
+
+/* ── featured case study (first card, spans 2 cols) ── */
+.pf-card.pf-featured {
+  grid-column: span 2;
+  flex-direction: row;
+}
+.pf-card.pf-featured .pf-visual {
+  width: 260px; height: auto; flex-shrink: 0; border-radius: 0;
+}
+.pf-card.pf-featured .pf-visual svg.pf-illustration { width: 120px; height: 120px; }
+
+/* ── stats strip ── */
+.pf-stats { background: var(--dark); padding: clamp(48px, 7vw, 72px) 0; }
+.pf-stats-inner {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+  text-align: center;
+}
+.pf-stat { padding: 0 24px; }
+.pf-stat + .pf-stat { border-left: 1px solid rgba(255,255,255,.12); }
+.pf-stat strong {
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; color: #fff;
+  line-height: 1; display: block; margin-bottom: 6px;
+}
+.pf-stat span { font-size: 1.4rem; color: var(--blue-l); font-weight: 700; }
+.pf-stat p    { font-size: .85rem; color: #94a3b8; }
+
+/* ── process strip ── */
+.pf-process { background: #f8faff; padding: clamp(64px, 9vw, 100px) 0; }
+.pf-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 48px;
+}
+.pf-step { text-align: center; padding: 0 8px; }
+.pf-step-num {
+  width: 48px; height: 48px; border-radius: 14px; margin: 0 auto 16px;
+  background: var(--blue); color: #fff; font-size: 1rem; font-weight: 800;
+  display: grid; place-items: center;
+}
+.pf-step h4 { font-size: .95rem; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+.pf-step p  { font-size: .84rem; color: var(--muted); line-height: 1.65; }
+.pf-step-arrow {
+  display: none; /* shown via ::after on desktop */
+}
+
+/* ── portfolio responsive ── */
+@media (max-width: 1024px) {
+  .pf-grid { grid-template-columns: repeat(2, 1fr); }
+  .pf-card.pf-featured { grid-column: span 2; }
+  .pf-stats-inner { grid-template-columns: repeat(2, 1fr); row-gap: 32px; }
+  .pf-stat + .pf-stat { border-left: none; }
+  .pf-stat:nth-child(odd) { border-right: 1px solid rgba(255,255,255,.12); }
+  .pf-steps { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .pf-grid { grid-template-columns: 1fr; }
+  .pf-card.pf-featured { grid-column: span 1; flex-direction: column; }
+  .pf-card.pf-featured .pf-visual { width: 100%; height: 180px; }
+  .pf-stats-inner { grid-template-columns: 1fr 1fr; }
+  .pf-steps { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) {
+  .pf-stats-inner { grid-template-columns: 1fr; }
+  .pf-stat { border-left: none !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,.1); }
+  .pf-stat:last-child { border-bottom: none; }
+}

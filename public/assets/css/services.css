@@ -1,0 +1,57 @@
+/* ─────────────────────────────────────────────
+   services.css — services.html only
+   Detail sections · Big icon · Bullets
+   ───────────────────────────────────────────── */
+
+/* ── alternating detail rows ── */
+.srv-detail-grid {
+  display: grid; grid-template-columns: 1fr 1.2fr;
+  gap: clamp(40px, 6vw, 80px); align-items: center; margin-bottom: 100px;
+}
+.srv-detail-grid.srv-flip { direction: rtl; }
+.srv-detail-grid.srv-flip > * { direction: ltr; }
+
+.srv-detail-icon-col { display: flex; justify-content: center; align-items: center; }
+.srv-big-icon {
+  width: 200px; height: 200px; border-radius: 36px;
+  background: linear-gradient(145deg, var(--blue-bg), var(--blue-mid));
+  display: grid; place-items: center; position: relative;
+  box-shadow: 0 20px 60px rgba(26,86,219,.18);
+}
+.srv-big-icon svg { width: 90px; height: 90px; color: var(--blue); }
+.srv-num {
+  position: absolute; top: -14px; right: -14px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--blue); color: #fff; font-size: .8rem; font-weight: 800;
+  display: grid; place-items: center;
+  box-shadow: 0 4px 14px rgba(26,86,219,.4);
+}
+
+.srv-detail-text .section-label { margin-bottom: 12px; }
+.srv-detail-text h2 {
+  font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800;
+  color: var(--dark); line-height: 1.2; letter-spacing: -.02em; margin-bottom: 14px;
+}
+.srv-detail-text > p { font-size: .95rem; color: var(--muted); line-height: 1.75; margin-bottom: 22px; }
+
+.srv-bullets { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+.srv-bullets li { display: flex; gap: 12px; align-items: flex-start; font-size: .9rem; color: var(--body); }
+.srv-bullets li svg {
+  width: 18px; height: 18px; color: var(--blue); flex-shrink: 0; margin-top: 2px;
+}
+.srv-link-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: .9rem; font-weight: 600; color: var(--blue);
+  transition: gap .2s;
+}
+.srv-link-btn:hover { gap: 14px; }
+.srv-link-btn svg { width: 16px; height: 16px; }
+
+/* ── services responsive ── */
+@media (max-width: 768px) {
+  .srv-detail-grid,
+  .srv-detail-grid.srv-flip { grid-template-columns: 1fr; direction: ltr; }
+  .srv-big-icon { width: 140px; height: 140px; border-radius: 24px; }
+  .srv-big-icon svg { width: 60px; height: 60px; }
+  .srv-detail-grid { margin-bottom: 60px; }
+}

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Menos iT Consult</title>
+  <meta name="description" content="Case studies and real-world projects by Menos iT Consult — network upgrades, cybersecurity rollouts, cloud migrations, web development, software builds and more across Ghana." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/portfolio.css" />
+</head>
+<body>
+
+  <div class="preloader" id="preloader">
+    <div class="pl-logo"><span class="logo-icon" style="width:48px;height:48px;font-size:1.5rem;border-radius:12px;">M</span></div>
+    <div class="pl-bar"><div class="pl-fill"></div></div>
+  </div>
+
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo"><span class="logo-icon">M</span><span>Menos <em>iT</em> Consult</span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="../index.html"          data-page="index">Home</a>
+        <a href="about.html"          data-page="about">About</a>
+        <a href="services.html"       data-page="services">Services</a>
+        <a href="portfolio.html"      data-page="portfolio">Portfolio</a>
+        <a href="testimonials.html"   data-page="testimonials">Testimonials</a>
+        <a href="blog.html"           data-page="blog">Blog</a>
+        <a href="contact.html"        data-page="contact">Contact</a>
+      </nav>
+      <a href="contact.html" class="btn btn-nav">Get Started</a>
+      <button class="burger" id="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="drawer" id="drawer">
+    <a href="../index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="testimonials.html">Testimonials</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="btn btn-primary">Get Started</a>
+  </div>
+
+  <main class="page-transition">
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb reveal"><a href="../index.html">Home</a> <span>/</span> Portfolio</div>
+        <h1 class="reveal">Our Work</h1>
+        <p class="reveal">Real projects. Real results. A look at some of the challenges we've solved for businesses across Ghana.</p>
+      </div>
+    </section>
+
+    <!-- STATS STRIP -->
+    <section class="pf-stats">
+      <div class="container">
+        <div class="pf-stats-inner">
+          <div class="pf-stat reveal">
+            <strong class="count" data-to="150"><span>0</span></strong><span>+</span>
+            <p>Projects completed</p>
+          </div>
+          <div class="pf-stat reveal">
+            <strong class="count" data-to="12"><span>0</span></strong><span>+ yrs</span>
+            <p>Industry experience</p>
+          </div>
+          <div class="pf-stat reveal">
+            <strong class="count" data-to="8"><span>0</span></strong><span></span>
+            <p>Service areas</p>
+          </div>
+          <div class="pf-stat reveal">
+            <strong class="count" data-to="98"><span>0</span></strong><span>%</span>
+            <p>Client satisfaction</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECT GRID -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label reveal">Case Studies</div>
+        <h2 class="section-title reveal">Projects we're proud of</h2>
+        <p class="section-sub reveal">Filter by service area or browse all projects below.</p>
+
+        <!-- filter buttons -->
+        <div class="pf-filters reveal" id="pfFilters">
+          <button class="pf-filter active" data-filter="all">All Projects</button>
+          <button class="pf-filter" data-filter="network">Network</button>
+          <button class="pf-filter" data-filter="security">Cybersecurity</button>
+          <button class="pf-filter" data-filter="cloud">Cloud</button>
+          <button class="pf-filter" data-filter="webdev">Web Dev</button>
+          <button class="pf-filter" data-filter="softdev">Software Dev</button>
+          <button class="pf-filter" data-filter="consult">Consulting</button>
+          <button class="pf-filter" data-filter="support">IT Support</button>
+          <button class="pf-filter" data-filter="data">Data</button>
+        </div>
+
+        <!-- project cards -->
+        <div class="pf-grid" id="pfGrid">
+
+          <!-- FEATURED: Network -->
+          <div class="pf-card pf-featured reveal" data-cat="network">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="40" height="28" rx="3"/><path d="M16 40h16M24 36v4"/><circle cx="14" cy="18" r="3"/><circle cx="34" cy="18" r="3"/><circle cx="24" cy="28" r="3"/><path d="M17 18h14M14 21l10 7M34 21L24 28"/></svg>
+              <span class="pf-tag">Network</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">KAB Enterprises · Agona</p>
+              <h3>Full Network Overhaul — From Constant Downtime to Zero Interruptions</h3>
+              <p>KAB Enterprises was losing hours each week to network failures across their three-building compound. We designed and installed a structured cabling system, replaced aging switches with managed hardware, and implemented QoS policies to prioritise critical business traffic. Within 30 days of go-live, downtime dropped to zero.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 0 hours downtime/month</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 3× faster LAN throughput</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Covered 3 buildings</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2023</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Web Development — featured -->
+          <div class="pf-card pf-featured reveal" data-cat="webdev">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="6" width="40" height="32" rx="3"/>
+                <path d="M4 14h40"/>
+                <circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+                <circle cx="16" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+                <circle cx="22" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+                <path d="M16 26l-6 3 6 3M32 26l6 3-6 3M22 34l4-12"/>
+                <path d="M14 42h20M24 38v4"/>
+              </svg>
+              <span class="pf-tag tag-webdev">Web Dev</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Okuafo Farms · Western Region</p>
+              <h3>Full Business Website &amp; E-Commerce Store — Launched in 3 Weeks</h3>
+              <p>Okuafo Farms were selling entirely through word-of-mouth and WhatsApp. We designed and built a professional website with an integrated online store, product catalogue, and mobile payment checkout. The site went live in 21 days. Within the first month, they received 14 online orders from outside their local area — customers they would never have reached before.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Live in 21 days</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 14 new-region orders in month 1</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Mobile-optimised + SEO-ready</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2024</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Software Development -->
+          <div class="pf-card reveal" data-cat="softdev">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="6" y="4" width="36" height="40" rx="4"/>
+                <path d="M6 16h36"/>
+                <path d="M16 26l-6 4 6 4M32 26l6 4-6 4M22 36l4-16"/>
+                <circle cx="14" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+                <circle cx="20" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+              </svg>
+              <span class="pf-tag tag-softdev">Software Dev</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Twum &amp; Sons Hardware · Agona</p>
+              <h3>Custom Inventory &amp; Sales Management System</h3>
+              <p>The business was managing stock on paper ledgers and a shared spreadsheet that crashed weekly. We built a lightweight desktop application — custom-fitted to how their counter staff actually work — covering stock tracking, sales recording, low-stock alerts, and a daily summary report emailed to the owner automatically every evening.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Paper ledgers eliminated</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Automated daily reports</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2024</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Web Development — secondary -->
+          <div class="pf-card reveal" data-cat="webdev">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="6" width="40" height="32" rx="3"/>
+                <path d="M4 14h40"/>
+                <rect x="10" y="20" width="10" height="10" rx="1"/>
+                <path d="M26 22h10M26 27h7"/>
+                <path d="M14 42h20M24 38v4"/>
+              </svg>
+              <span class="pf-tag tag-webdev">Web Dev</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Grace Gospel Church · Agona</p>
+              <h3>Church Website with Event Calendar &amp; Sermon Archive</h3>
+              <p>Designed and built a clean, mobile-first website for a local congregation — featuring an events calendar, downloadable sermon audio, an online giving page, and a simple CMS so the church admin can update content without any technical help.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Self-managed CMS</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Online giving integrated</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2023</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Software Development — secondary -->
+          <div class="pf-card reveal" data-cat="softdev">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="8" y="4" width="32" height="40" rx="3"/>
+                <path d="M16 14h16M16 20h10M16 26h12M16 32h8"/>
+                <circle cx="36" cy="36" r="8"/>
+                <path d="M33 36l2 2 4-4"/>
+              </svg>
+              <span class="pf-tag tag-softdev">Software Dev</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Yeboah Clinic · Tarkwa</p>
+              <h3>Patient Appointment &amp; Records Web App</h3>
+              <p>Built a secure, browser-based appointment booking system with a patient records module — replacing a paper-based system that caused double-bookings and lost files. Staff can search, book, and update records from any device; patients receive SMS reminders automatically.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Zero double-bookings</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> SMS reminders automated</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2025</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cybersecurity -->
+          <div class="pf-card reveal" data-cat="security">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4L6 12v12c0 11 8 20 18 22 10-2 18-11 18-22V12L24 4z"/><polyline points="17 24 22 29 31 19"/></svg>
+              <span class="pf-tag tag-security">Cybersecurity</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Sarpong &amp; Co. · Takoradi</p>
+              <h3>Security Audit &amp; Endpoint Hardening for a Legal Firm</h3>
+              <p>Conducted a full vulnerability assessment, found 14 critical gaps including unpatched endpoints and weak remote-access policies. Delivered a remediation roadmap and implemented endpoint protection, MFA, and staff phishing awareness training within six weeks.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 14 vulnerabilities closed</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> MFA deployed org-wide</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2024</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cloud -->
+          <div class="pf-card reveal" data-cat="cloud">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32a10 10 0 0 1 0-20 12 12 0 0 1 23.4-3A10 10 0 0 1 40 28"/><path d="M20 36v-10M28 36v-10M16 32l4-4 4 4M24 32l4-4 4 4"/></svg>
+              <span class="pf-tag tag-cloud">Cloud</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Mensah Logistics · Tarkwa</p>
+              <h3>On-Premise to Cloud Migration — Cut IT Costs by 40 %</h3>
+              <p>Mensah Logistics was running ageing on-site servers with no offsite backup. We migrated their file shares, accounting system, and email to a cloud-hosted stack, implemented automated daily backups, and handed over a self-service admin dashboard their office manager can use without IT knowledge.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 40 % monthly cost saving</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Automated daily backups</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2023</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- IT Consulting -->
+          <div class="pf-card reveal" data-cat="consult">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="36" height="28" rx="3"/><path d="M6 18h36M18 34v8M30 34v8M14 42h20"/><path d="M16 12h4M26 12h6"/></svg>
+              <span class="pf-tag tag-consult">Consulting</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Boateng Medical Centre · Agona</p>
+              <h3>IT Strategy Roadmap for a Growing Medical Practice</h3>
+              <p>The clinic's IT was a patchwork of consumer-grade equipment and ad-hoc solutions. We audited the environment, interviewed staff, and delivered a clear 18-month IT roadmap prioritised by risk and return — including a phased move to a healthcare-appropriate cloud stack.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 18-month roadmap delivered</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 3 quick wins identified</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2024</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- IT Support -->
+          <div class="pf-card reveal" data-cat="support">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="20"/><path d="M24 14v10l6 6"/><circle cx="24" cy="24" r="3" fill="currentColor" stroke="none" opacity=".3"/></svg>
+              <span class="pf-tag tag-support">IT Support</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Asante Trading Co. · Agona</p>
+              <h3>24 / 7 Managed Support — Friday-Night Outage Resolved by Morning</h3>
+              <p>Asante Trading experienced a critical network failure on a Friday evening during a stock-taking exercise. Our on-call team responded within 20 minutes, diagnosed a failed core switch remotely, and had a replacement unit configured and operational before the next business day opened.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> &lt; 20 min response time</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Back online by 6 am</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2024</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Data Management -->
+          <div class="pf-card reveal" data-cat="data">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="12" rx="16" ry="5"/><path d="M40 24c0 2.76-7.16 5-16 5S8 26.76 8 24"/><path d="M40 12v24c0 2.76-7.16 5-16 5S8 38.76 8 36V12"/></svg>
+              <span class="pf-tag tag-data">Data</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Antwi Group · Western Region</p>
+              <h3>Data Cleanup, Centralisation &amp; Automated Reporting Dashboard</h3>
+              <p>Years of unstructured files spread across personal drives and USB sticks were costing the finance team hours each week. We audited, cleaned, and centralised all data, set up role-based access controls, built automated weekly backup jobs, and delivered a simple reporting dashboard in Google Looker Studio.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 6 hrs/week saved</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Automated backups live</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2022</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Network — secondary -->
+          <div class="pf-card reveal" data-cat="network">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="40" height="28" rx="3"/><path d="M16 40h16M24 36v4M12 20h24M12 26h16"/></svg>
+              <span class="pf-tag">Network</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Agyenim School · Agona</p>
+              <h3>School-Wide Wi-Fi Deployment Across 8 Classrooms</h3>
+              <p>Designed and installed a managed wireless network covering all teaching areas, the admin block, and the computer lab. Configured content filtering and a student/staff SSID separation so teachers maintain full bandwidth priority during school hours.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 8 rooms covered</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Content filtering active</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2022</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cloud — secondary -->
+          <div class="pf-card reveal" data-cat="cloud">
+            <div class="pf-visual">
+              <svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 32a10 10 0 0 1 0-20 12 12 0 0 1 23.4-3A10 10 0 0 1 40 28"/><rect x="16" y="30" width="16" height="12" rx="2"/><path d="M20 30v-4a4 4 0 0 1 8 0v4"/></svg>
+              <span class="pf-tag tag-cloud">Cloud</span>
+            </div>
+            <div class="pf-body">
+              <p class="pf-client">Fortis Pharmacy · Tarkwa</p>
+              <h3>Secure Cloud Email &amp; Document Management Setup</h3>
+              <p>Migrated the pharmacy off a self-hosted, unpatched mail server onto Microsoft 365, configured email security policies, spam filtering, and set up SharePoint for document collaboration — enabling hybrid working for management staff.</p>
+              <div class="pf-outcomes">
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> M365 deployed in 5 days</span>
+                <span class="pf-outcome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Zero spam since launch</span>
+              </div>
+              <div class="pf-card-foot">
+                <span class="pf-year">2023</span>
+                <a href="contact.html" class="pf-more">Similar project? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- no-results message -->
+          <div class="pf-no-results" id="pfNoResults" style="display:none; grid-column:1/-1; text-align:center; padding:60px 0; color:var(--muted);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;margin:0 auto 14px;display:block;opacity:.4"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <p style="font-size:.95rem;">No projects found for that filter.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW WE WORK -->
+    <section class="pf-process">
+      <div class="container">
+        <div class="section-label reveal">Our Process</div>
+        <h2 class="section-title reveal">How every project works</h2>
+        <p class="section-sub reveal">We follow the same four-step process on every engagement — so you always know what to expect.</p>
+        <div class="pf-steps">
+          <div class="pf-step reveal">
+            <div class="pf-step-num">1</div>
+            <h4>Discovery call</h4>
+            <p>We start with a free 30-minute conversation to understand your business, your current setup, and what you're trying to achieve.</p>
+          </div>
+          <div class="pf-step reveal">
+            <div class="pf-step-num">2</div>
+            <h4>Assessment &amp; quote</h4>
+            <p>We assess your environment — on-site or remotely — then deliver a clear, itemised quote with no hidden fees before any work begins.</p>
+          </div>
+          <div class="pf-step reveal">
+            <div class="pf-step-num">3</div>
+            <h4>Delivery</h4>
+            <p>We execute the project to the agreed scope and timeline, keeping you updated at each milestone and flagging any changes before acting on them.</p>
+          </div>
+          <div class="pf-step reveal">
+            <div class="pf-step-num">4</div>
+            <h4>Handover &amp; support</h4>
+            <p>Every project ends with a handover session and documentation. Ongoing support retainers are available so we stay in your corner after go-live.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA BAND -->
+    <section class="cta-band">
+      <div class="container">
+        <div class="cta-band-inner reveal">
+          <div>
+            <h2>Have a project in mind?</h2>
+            <p>Tell us what you're working on and we'll put together a proposal.</p>
+          </div>
+          <a href="contact.html" class="btn btn-white">Start a conversation</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="logo"><span class="logo-icon">M</span><span>Menos <em>iT</em> Consult</span></a>
+          <p>Empowering small businesses in Ghana and beyond through smart, reliable technology solutions.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon fill="currentColor" stroke="none" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg></a>
+            <a href="https://wa.me/233000000000" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col"><h4>Services</h4><ul><li><a href="services.html">Network Design</a></li><li><a href="services.html">Cybersecurity</a></li><li><a href="services.html">Cloud Solutions</a></li><li><a href="services.html">Web Development</a></li><li><a href="services.html">Software Development</a></li><li><a href="services.html">IT Consulting</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="blog.html">Blog</a></li><li><a href="testimonials.html">Testimonials</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Legal</h4><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="cookies.html">Cookie Policy</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Menos iT Consult. All rights reserved.</p>
+        <p>Agona, Western Region, Ghana</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp bubble -->
+  <a href="https://wa.me/233000000000" class="wa-bubble" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- Cookie consent banner -->
+  <div class="cookie-banner" id="cookieBanner" role="alertdialog" aria-label="Cookie consent">
+    <div class="cookie-inner">
+      <div class="cookie-text">
+        <strong>We use cookies</strong>
+        <p>We use cookies to improve your experience. By continuing, you accept our <a href="cookies.html">Cookie Policy</a>.</p>
+      </div>
+      <div class="cookie-actions">
+        <button class="btn btn-ghost btn-sm" id="cookieDecline">Decline</button>
+        <button class="btn btn-primary btn-sm" id="cookieAccept">Accept All</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/script.js"></script>
+  <script>
+    /* ── Portfolio filter ── */
+    (() => {
+      const filters = document.querySelectorAll('.pf-filter');
+      const cards   = document.querySelectorAll('.pf-grid .pf-card');
+      const noRes   = document.getElementById('pfNoResults');
+
+      filters.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filters.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const cat = btn.dataset.filter;
+          let visible = 0;
+
+          cards.forEach(card => {
+            const match = cat === 'all' || card.dataset.cat === cat;
+            card.style.display = match ? '' : 'none';
+            if (match) visible++;
+          });
+
+          noRes.style.display = visible === 0 ? 'block' : 'none';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

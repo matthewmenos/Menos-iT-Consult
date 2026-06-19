@@ -1,0 +1,33 @@
+/* ─────────────────────────────────────────────
+   testimonials.css — testimonials.html only
+   Stats bar · Full review grid
+   ───────────────────────────────────────────── */
+
+/* ── stats bar ── */
+.testi-stats-bar { background: var(--dark); padding: clamp(36px, 5vw, 56px) 0; }
+.testi-stats {
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(20px, 4vw, 56px); flex-wrap: wrap;
+}
+.ts { text-align: center; }
+.ts strong {
+  font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 900; color: #fff;
+  line-height: 1; display: inline-block;
+}
+.ts span { font-size: 1.4rem; color: var(--blue-l); font-weight: 700; }
+.ts p    { font-size: .85rem; color: #94a3b8; margin-top: 4px; }
+.ts-div  { width: 1px; height: 48px; background: rgba(255,255,255,.15); }
+
+/* ── full testimonial grid ── */
+.testi-full-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 40px;
+}
+
+/* ── testimonials responsive ── */
+@media (max-width: 900px) {
+  .testi-full-grid { grid-template-columns: repeat(2, 1fr); }
+  .ts-div { display: none; }
+}
+@media (max-width: 540px) {
+  .testi-full-grid { grid-template-columns: 1fr; }
+}

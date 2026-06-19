@@ -1,0 +1,30 @@
+/* ─────────────────────────────────────────────
+   contact.css — contact.html only
+   Map box · FAQ accordion
+   ───────────────────────────────────────────── */
+
+/* ── map embed ── */
+.map-box {
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border); margin-top: 8px;
+}
+
+/* ── FAQ accordion ── */
+.faq-list  { display: flex; flex-direction: column; gap: 0; max-width: 720px; margin: 0 auto; }
+.faq-item  { border-bottom: 1px solid var(--border); }
+.faq-q {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 20px 0; background: none; border: none;
+  font-size: .95rem; font-weight: 600; color: var(--dark); cursor: pointer;
+  font-family: inherit; text-align: left; transition: color .2s;
+}
+.faq-q:hover { color: var(--blue); }
+.faq-q svg   { width: 18px; height: 18px; flex-shrink: 0; color: var(--muted); transition: transform .35s cubic-bezier(.16,1,.3,1); }
+.faq-q[aria-expanded="true"]      { color: var(--blue); }
+.faq-q[aria-expanded="true"] svg  { transform: rotate(180deg); color: var(--blue); }
+.faq-a {
+  overflow: hidden; max-height: 0;
+  transition: max-height .4s cubic-bezier(.16,1,.3,1);
+}
+.faq-a.open { max-height: 200px; }
+.faq-a p    { font-size: .9rem; color: var(--muted); line-height: 1.7; padding-bottom: 20px; }
