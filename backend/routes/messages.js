@@ -1,50 +1,41 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const express     = require('express');
+const db          = require('../db');
 const requireAuth = require('../middleware/auth');
-const router = express.Router();
-
-const MESSAGES_FILE = path.join(__dirname, '../data/messages.json');
-
-function loadMessages() {
-  try {
-    return JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8'));
-  } catch {
-    return [];
-  }
-}
-
-function saveMessages(messages) {
-  fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages, null, 2));
-}
+const router      = express.Router();
 
 // GET / — all messages sorted newest first (auth required)
-router.get('/', requireAuth, (req, res) => {
-  const messages = loadMessages();
-  const sorted = messages.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  res.json(sorted);
+router.get('/', requireAuth, async (req, res) => {
+  try {
+    res.json(await db.getMessages());
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error.' });
+  }
 });
 
 // DELETE /:id — delete message (auth required)
-router.delete('/:id', requireAuth, (req, res) => {
-  const messages = loadMessages();
-  const idx = messages.findIndex(m => m.id === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'Message not found.' });
-
-  messages.splice(idx, 1);
-  saveMessages(messages);
-  res.json({ success: true });
+router.delete('/:id', requireAuth, async (req, res) => {
+  try {
+    const m = await db.getMessage(req.params.id);
+    if (!m) return res.status(404).json({ error: 'Message not found.' });
+    await db.deleteMessage(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error.' });
+  }
 });
 
 // PATCH /:id/read — mark message as read (auth required)
-router.patch('/:id/read', requireAuth, (req, res) => {
-  const messages = loadMessages();
-  const idx = messages.findIndex(m => m.id === req.params.id);
-  if (idx === -1) return res.status(404).json({ error: 'Message not found.' });
-
-  messages[idx].read = true;
-  saveMessages(messages);
-  res.json(messages[idx]);
+router.patch('/:id/read', requireAuth, async (req, res) => {
+  try {
+    const m = await db.markMessageRead(req.params.id);
+    if (!m) return res.status(404).json({ error: 'Message not found.' });
+    res.json(m);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error.' });
+  }
 });
 
 module.exports = router;

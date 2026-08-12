@@ -155,7 +155,7 @@
     });
   });
 
-  const API = 'http://localhost:3000/api';
+  const API = '/api';
 
   /* ── Contact form ── */
   const contactForm = document.getElementById('contactForm');

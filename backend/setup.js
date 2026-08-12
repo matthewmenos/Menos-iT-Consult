@@ -1,9 +1,26 @@
+/**
+ * Set / reset the admin password in Postgres.
+ *
+ * Previously this wrote backend/data/admin.json (flat file). Now that storage
+ * is Postgres-backed (and the Vercel filesystem is read-only), it updates the
+ * admin row directly.
+ *
+ * Usage:  ADMIN_PASSWORD=newpass NODE_ENV=production node setup.js
+ */
+require('dotenv').config();
 const bcrypt = require('bcryptjs');
-const fs = require('fs');
-const path = require('path');
+const db     = require('./db');
 
-const PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
-const hash = bcrypt.hashSync(PASSWORD, 12);
-const adminFile = path.join(__dirname, 'data/admin.json');
-fs.writeFileSync(adminFile, JSON.stringify({ username: 'admin', passwordHash: hash }, null, 2));
-console.log(`Admin password set. Login with: admin / ${PASSWORD}`);
+async function main() {
+  const pw = process.env.ADMIN_PASSWORD || 'admin123';
+  const hash = bcrypt.hashSync(pw, 12);
+  await db.initDb();
+  await db.updateAdminPassword(hash);
+  console.log('Admin password set in Postgres. Login with: admin / ' + pw);
+  process.exit(0);
+}
+
+main().catch(err => {
+  console.error('Setup failed:', err);
+  process.exit(1);
+});

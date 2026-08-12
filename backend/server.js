@@ -1,9 +1,10 @@
 require('dotenv').config();
 
-const express  = require('express');
-const cors     = require('cors');
-const path     = require('path');
-const session  = require('express-session');
+const express       = require('express');
+const cors          = require('cors');
+const path          = require('path');
+const cookieParser  = require('cookie-parser');
+const db            = require('./db');
 
 const contactRoute    = require('./routes/contact');
 const newsletterRoute = require('./routes/newsletter');
@@ -12,6 +13,7 @@ const blogsRoute      = require('./routes/blogs');
 const messagesRoute   = require('./routes/messages');
 
 const app    = express();
+app.set('trust proxy', 1); // served behind Nginx/Vercel — respect X-Forwarded-* headers
 const PORT   = process.env.PORT || 3000;
 const PUBLIC = path.join(__dirname, '../public');
 const ADMIN  = path.join(__dirname, '../admin');
@@ -25,19 +27,21 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'mit-secret-change-me',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { httpOnly: true, maxAge: 8 * 60 * 60 * 1000 },
-}));
+// ── Stateless auth (no in-memory session store) ────────────────────────────
+// Admin logs in once; an httpOnly *signed* cookie carries the auth flag, so
+// nothing expires between Vercel cold starts and the same cookie is honoured
+// on every request (via req.signedCookies). The signing key is SESSION_SECRET.
+app.use(cookieParser(process.env.SESSION_SECRET));
 
-// ── Admin panel ──────────────────────────────────────────────
-app.use('/admin', express.static(ADMIN));
+// ── Admin panel ────────────────────────────────────────────────────────────
+// Serve /admin directly (200) and disable the static trailing-slash redirect
+// so the admin entry point never 301s. /admin/* assets and the SPA fallback
+// (/admin/<anything> -> index.html) still work via the handlers below.
 app.get('/admin', (_req, res) => res.sendFile(path.join(ADMIN, 'index.html')));
+app.use('/admin', express.static(ADMIN, { redirect: false }));
 app.get('/admin/*path', (_req, res) => res.sendFile(path.join(ADMIN, 'index.html')));
 
-// ── API routes ───────────────────────────────────────────────
+// ── API routes ─────────────────────────────────────────────────────────────
 app.use('/api/auth',       authRoute);
 app.use('/api/contact',    contactRoute);
 app.use('/api/newsletter', newsletterRoute);
@@ -45,12 +49,12 @@ app.use('/api/blogs',      blogsRoute);
 app.use('/api/messages',   messagesRoute);
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
-// ── Frontend static files ────────────────────────────────────
+// ── Frontend static files ──────────────────────────────────────────────────
 app.use(express.static(PUBLIC));
 
-// ── Clean URL routing for pages ──────────────────────────────
-// /about  → public/pages/about.html
-// /blog   → public/pages/blog.html  etc.
+// ── Clean URL routing for pages ────────────────────────────────────────────
+// /about  -> public/pages/about.html
+// /blog   -> public/pages/blog.html  etc.
 const PAGE_ROUTES = [
   'about', 'services', 'portfolio', 'testimonials',
   'contact', 'blog', 'privacy', 'terms', 'cookies',
@@ -62,7 +66,16 @@ PAGE_ROUTES.forEach(page => {
   });
 });
 
-// ── 404 page ─────────────────────────────────────────────────
+// ── Page aliases (*.html) ─────────────────────────────────────────────────
+// Lets the relative links used inside pages/*.html (e.g. `about.html`) resolve
+// even when a visitor arrives via a clean URL such as /contact.
+PAGE_ROUTES.forEach(page => {
+  app.get(`/${page}.html`, (_req, res) => {
+    res.sendFile(path.join(PUBLIC, 'pages', `${page}.html`));
+  });
+});
+
+// ── 404 page ───────────────────────────────────────────────────────────────
 app.get('/404', (_req, res) => {
   res.status(404).sendFile(path.join(PUBLIC, 'pages', '404.html'));
 });
@@ -72,7 +85,10 @@ app.get('/{*path}', (_req, res) => {
   res.status(404).sendFile(path.join(PUBLIC, 'pages', '404.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`\n  Menos iT Consult — http://localhost:${PORT}`);
-  console.log(`  Admin panel       — http://localhost:${PORT}/admin\n`);
-});
+  app.listen(PORT, () => {
+    console.log(`\n  Menos iT Consult — http://localhost:${PORT}`);
+    console.log(`  Admin panel       — http://localhost:${PORT}/admin`);
+    console.log(`  API health        — http://localhost:${PORT}/api/health\n`);
+  });
+
+module.exports = app;

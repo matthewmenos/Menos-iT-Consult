@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "functions": {
+    "backend/api.js": {
+      "runtime": "nodejs20.x",
+      "maxDuration": 30,
+      "includeFiles": [
+        "public/**",
+        "admin/**",
+        "backend/data/**"
+      ]
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/backend/api.js" }
+  ]
+}

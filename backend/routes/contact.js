@@ -1,24 +1,7 @@
-const express  = require('express');
+const express   = require('express');
 const nodemailer = require('nodemailer');
-const fs = require('fs');
-const path = require('path');
-const router   = express.Router();
-
-const MESSAGES_FILE = path.join(__dirname, '../data/messages.json');
-
-function loadMessages() {
-  try {
-    return JSON.parse(fs.readFileSync(MESSAGES_FILE, 'utf8'));
-  } catch {
-    return [];
-  }
-}
-
-function saveMessage(entry) {
-  const messages = loadMessages();
-  messages.push(entry);
-  fs.writeFileSync(MESSAGES_FILE, JSON.stringify(messages, null, 2));
-}
+const db        = require('../db');
+const router    = express.Router();
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -40,6 +23,25 @@ router.post('/', async (req, res) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Please enter a valid email address.' });
+  }
+
+  const msgEntry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+    createdAt: new Date().toISOString(),
+    read: false,
+    name: `${firstName} ${lastName}`,
+    email,
+    phone: phone || '',
+    service: service || '',
+    source: source || '',
+    message,
+  };
+
+  // Always persist the message regardless of email outcome
+  try {
+    await db.saveMessage(msgEntry);
+  } catch (err) {
+    console.error('Contact DB save error:', err);
   }
 
   const mailOptions = {
@@ -66,23 +68,8 @@ router.post('/', async (req, res) => {
           <p style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:0;line-height:1.7;font-size:15px">${message.replace(/\n/g, '<br>')}</p>
           <p style="margin:24px 0 0;font-size:13px;color:#94a3b8">Reply directly to this email to respond to ${firstName}.</p>
         </div>
-      </div>
-    `,
+      </div>`,
   };
-
-  // Always save message to messages.json regardless of email outcome
-  const msgEntry = {
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
-    createdAt: new Date().toISOString(),
-    read: false,
-    name: `${firstName} ${lastName}`,
-    email,
-    phone: phone || '',
-    service: service || '',
-    source: source || '',
-    message,
-  };
-  saveMessage(msgEntry);
 
   try {
     await transporter.sendMail(mailOptions);
