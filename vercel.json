@@ -4,11 +4,7 @@
     "backend/api.js": {
       "runtime": "nodejs20.x",
       "maxDuration": 30,
-      "includeFiles": [
-        "public/**",
-        "admin/**",
-        "backend/data/**"
-      ]
+      "includeFiles": "public/**,admin/**,backend/data/**"
     }
   },
   "rewrites": [
