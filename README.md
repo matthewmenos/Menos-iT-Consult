@@ -8,6 +8,9 @@ Official website for **Menos iT Consult**, an IT consulting company based in Ago
 
 ```
 Menos-iT-Consult/
+├── api/                        # Vercel Serverless Function entry
+│   └── index.js                # Re-exports backend/server (whole site + API)
+│
 ├── public/                     # All frontend files
 │   ├── index.html              # Home page
 │   ├── pages/                  # All other pages
@@ -34,10 +37,10 @@ Menos-iT-Consult/
 │   ├── editor.js
 │   └── style.css
 │
+├── package.json                # Root deps (Vercel installs these for the function bundle)
 ├── vercel.json                 # Vercel config (single function + rewrites)
 └── backend/                    # Node.js + Express API
-    ├── api.js                  # Vercel Serverless Function entry
-    ├── server.js               # Express app (exported for api.js)
+    ├── server.js               # Express app (exported for api/index.js)
     ├── db.js                   # PostgreSQL data-access layer
     ├── migrate.js              # Seed PostgreSQL from data/*.json
     ├── setup.js                # Set/reset the admin password in PostgreSQL
@@ -218,10 +221,14 @@ Access at `http://localhost:3000/admin`
 
 The app deploys to **Vercel as a single Serverless Function**. `vercel.json`
 rewrites **all** requests (`/`, `/admin`, `/api/*`, clean URLs, 404) to
-`backend/api.js`, which exports the Express app from `server.js`. That one host
+`api/index.js` — the Vercel entry point in the `api/` directory that re-exports
+the Express app from `server.js`. That one function
 serves the public site, the admin dashboard **and** the API with zero
 cross-origin calls. Auth is a stateless signed cookie (survives cold starts)
 and every write goes to **PostgreSQL** (the Vercel filesystem is read-only).
+The Node.js version is chosen in **Project Settings → Node.js Version**
+(`functions` config has no `runtime` — a value like `nodejs20.x` is not a
+valid Vercel Function runtime).
 
 ### 1. Create a PostgreSQL database
 Use **Vercel Postgres** (or any Postgres provider) and copy the connection
@@ -269,16 +276,20 @@ vercel run backend/migrate.js
 > `ADMIN_PASSWORD` you seeded.
 
 ### Notes
-- A single Serverless Function serves every route; `public/` and `admin/` are
-  bundled for it via `includeFiles` in `vercel.json` so `express.static` can
-  serve them. For very high traffic you can push `/assets`, `/admin` and clean
-  URL rewrites to Vercel's edge static layer, but the single-function setup is
-  what keeps everything on one host.
+- A single Serverless Function serves every route; `public/`, `admin/` and
+  `backend/data/` are bundled into it via `includeFiles` in `vercel.json`
+  (a comma-separated glob string) so `express.static` can serve them. For very
+  high traffic you can push `/assets`, `/admin` and clean URL rewrites to
+  Vercel's edge static layer, but the single-function setup is what keeps
+  everything on one host.
 - Each cold start opens its own Postgres connections through the `pg` Pool —
   fine for this site's scale.
 - The public blog at `/blog` and article pages at `/blog/<slug>` load published
   posts from `GET /api/blogs?status=published` and `GET /api/blogs/slug/:slug`,
   so posts published in the admin dashboard appear on the public site immediately.
+- The root `package.json` mirrors the `backend/package.json` dependencies so
+  `vercel build` runs `npm install` at the project root and can bundle the
+  Express app (and `pg`, `bcryptjs`, …) into the `api/index.js` function.
 
 ---
 

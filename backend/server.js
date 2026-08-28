@@ -3,6 +3,7 @@ require('dotenv').config();
 const express       = require('express');
 const cors          = require('cors');
 const path          = require('path');
+const fs            = require('fs');
 const cookieParser  = require('cookie-parser');
 const db            = require('./db');
 
@@ -15,8 +16,28 @@ const messagesRoute   = require('./routes/messages');
 const app    = express();
 app.set('trust proxy', 1); // served behind Nginx/Vercel — respect X-Forwarded-* headers
 const PORT   = process.env.PORT || 3000;
-const PUBLIC = path.join(__dirname, '../public');
-const ADMIN  = path.join(__dirname, '../admin');
+
+// ── Static directories across deployment layouts ────────────────────────────
+//  • local / PM2:            backend/server.js        → ../public (one level up)
+//  • Vercel function:        includeFiles copies `public/**` next to the bundled
+//    handler (api/index.js)  → __dirname/public
+// Pick the first directory that actually exists so both layouts work.
+function firstDir(...candidates) {
+  for (const dir of candidates) {
+    try { if (fs.statSync(dir).isDirectory()) return dir; } catch (_) { /* keep looking */ }
+  }
+  return candidates[0];
+}
+const PUBLIC = firstDir(
+  path.join(__dirname, 'public'),
+  path.join(__dirname, '../public'),
+  path.join(process.cwd(), 'public')
+);
+const ADMIN  = firstDir(
+  path.join(__dirname, 'admin'),
+  path.join(__dirname, '../admin'),
+  path.join(process.cwd(), 'admin')
+);
 
 app.use(cors({
   origin: (origin, cb) => cb(null, true),

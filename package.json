@@ -1,0 +1,16 @@
+{
+  "name": "menos-it-consult",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Menos iT Consult website — single Vercel Serverless Function (Express) + static site + admin dashboard.",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "nodemailer": "^9.0.1",
+    "pg": "^8.12.3"
+  }
+}
