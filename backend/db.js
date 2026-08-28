@@ -118,6 +118,13 @@ async function getBlog(id) {
   const { rows } = await needPool().query('SELECT * FROM blogs WHERE id = $1', [id]);
   return rows[0] ? mapBlog(rows[0]) : null;
 }
+async function getBlogBySlug(slug) {
+  const { rows } = await needPool().query(
+    'SELECT * FROM blogs WHERE slug = $1 ORDER BY created_at DESC LIMIT 1',
+    [slug]
+  );
+  return rows[0] ? mapBlog(rows[0]) : null;
+}
 async function createBlog(blog) {
   const now = new Date().toISOString();
   const created = blog.createdAt || now;
@@ -224,7 +231,7 @@ async function updateAdminPassword(hash) {
 module.exports = {
   pool,
   initDb,
-  getBlogs, getBlog, createBlog, updateBlog, deleteBlog, setBlogStatus,
+  getBlogs, getBlog, getBlogBySlug, createBlog, updateBlog, deleteBlog, setBlogStatus,
   getMessages, getMessage, deleteMessage, markMessageRead, saveMessage,
   getSubscribers, addSubscriber, deleteSubscriber,
   getAdmin, updateAdminPassword,

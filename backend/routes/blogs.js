@@ -7,10 +7,30 @@ function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
-// GET / — all blogs (public)
+// GET / — all blogs (public); ?status=published filters to live posts only.
+// The public site uses ?status=published so drafts stay hidden from visitors.
 router.get('/', async (req, res) => {
   try {
-    res.json(await db.getBlogs());
+    let blogs = await db.getBlogs();
+    if (req.query.status === 'published') {
+      blogs = blogs.filter(b => b.status === 'published');
+    }
+    res.json(blogs);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error.' });
+  }
+});
+
+// GET /slug/:slug — single PUBLISHED blog by slug (public)
+// Registered before /:id so a slug is never mistaken for an id route.
+router.get('/slug/:slug', async (req, res) => {
+  try {
+    const blog = await db.getBlogBySlug(req.params.slug);
+    if (!blog || blog.status !== 'published') {
+      return res.status(404).json({ error: 'Blog post not found.' });
+    }
+    res.json(blog);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error.' });

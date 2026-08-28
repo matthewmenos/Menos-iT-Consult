@@ -64,7 +64,7 @@
       <div class="container">
 
         <!-- featured post -->
-        <a href="#" class="blog-featured reveal">
+        <a href="#" id="featuredPost" class="blog-featured">
           <div class="bf-visual">
             <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4L6 12v12c0 11 8 20 18 22 10-2 18-11 18-22V12L24 4z"/><path d="M17 24l5 5 9-9"/></svg>
           </div>
@@ -317,7 +317,7 @@
         <div class="footer-col"><h4>Legal</h4><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Service</a></li><li><a href="cookies.html">Cookie Policy</a></li></ul></div>
       </div>
       <div class="footer-bottom">
-        <p>© 2025 Menos iT Consult. All rights reserved.</p>
+        <p>© 2026 Menos iT Consult. All rights reserved.</p>
         <p>Agona, Western Region, Ghana</p>
       </div>
     </div>
@@ -340,35 +340,130 @@
   </div>
 
   <script src="../assets/js/script.js"></script>
+  <script src="../assets/js/blog.js"></script>
   <script>
-    /* blog category filter */
+    /* Public blog — loads published posts from the API and renders them.
+       The static demo cards already in the markup act as a fallback when the
+       API is unreachable; when data arrives they are swapped for live posts. */
     (() => {
-      const filters  = document.querySelectorAll('.blog-filter');
-      const cards    = document.querySelectorAll('#blogGrid .blog-card');
-      const noRes    = document.getElementById('blogNoResults');
-      const sideCats = document.querySelectorAll('.sidebar-cats a[data-scat]');
+      const grid      = document.getElementById('blogGrid');
+      const noResults = document.getElementById('blogNoResults');
+      const featured  = document.getElementById('featuredPost');
+      if (!grid || !noResults || !featured) return;
+
+      const CLOCK  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+      const CAL    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+      const ARROW  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+      const SHIELD = '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4L6 12v12c0 11 8 20 18 22 10-2 18-11 18-22V12L24 4z"/><path d="M17 24l5 5 9-9"/></svg>';
+
+      function featuredHtml(p) {
+        const meta = blog.categoryMeta(p.category);
+        return `
+          <div class="bf-visual">${SHIELD}</div>
+          <div class="bf-body">
+            <span class="bf-cat">${blog.escHtml(meta.label)}</span>
+            <h2>${blog.escHtml(p.title)}</h2>
+            <p>${blog.escHtml(p.excerpt || '')}</p>
+            <div class="bf-meta">
+              ${p.readTime ? `<span>${CLOCK} ${blog.escHtml(p.readTime)}</span>` : ''}
+              <span>${CAL} ${blog.fmtDate(p.createdAt)}</span>
+              <span>By Menos iT Consult</span>
+            </div>
+            <span class="bf-read">Read article ${ARROW}</span>
+          </div>`;
+      }
+
+      function cardHtml(p) {
+        const meta = blog.categoryMeta(p.category);
+        return `
+          <a href="${blog.postUrl(p.slug)}" class="blog-card" data-cat="${blog.escAttr(meta.key)}">
+            <div class="bc-visual">
+              ${SHIELD}
+              <span class="bc-cat ${meta.cls}">${blog.escHtml(meta.label)}</span>
+            </div>
+            <div class="bc-body">
+              <div class="bc-meta">
+                ${p.readTime ? `<span>${CLOCK} ${blog.escHtml(p.readTime)}</span>` : ''}
+                <span>${CAL} ${blog.fmtDate(p.createdAt)}</span>
+              </div>
+              <h3>${blog.escHtml(p.title || 'Untitled')}</h3>
+              <p>${blog.escHtml(p.excerpt || '')}</p>
+              <span class="bc-read">Read ${ARROW}</span>
+            </div>
+          </a>`;
+      }
+
+      function renderSidebarCats(posts) {
+        const sideCats = document.querySelector('.sidebar-cats');
+        const catCard  = sideCats ? sideCats.closest('.sidebar-card') : null;
+        if (!sideCats || !catCard) return;
+        const counts = new Map();
+        posts.forEach(p => {
+          const key = blog.categoryMeta(p.category).key;
+          counts.set(key, (counts.get(key) || 0) + 1);
+        });
+        if (counts.size === 0) { catCard.style.display = 'none'; return; }
+        sideCats.innerHTML = [...counts.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .map(([key, n]) => `<a href="#" data-scat="${blog.escAttr(key)}">${blog.escHtml(blog.categoryMeta(key).label)} <span>${n}</span></a>`)
+          .join('');
+      }
 
       function applyFilter(cat) {
-        filters.forEach(b => b.classList.toggle('active', b.dataset.filter === cat));
+        document.querySelectorAll('.blog-filter').forEach(b =>
+          b.classList.toggle('active', b.dataset.filter === cat));
         let visible = 0;
-        cards.forEach(c => {
+        grid.querySelectorAll('.blog-card').forEach(c => {
           const show = cat === 'all' || c.dataset.cat === cat;
           c.style.display = show ? '' : 'none';
           if (show) visible++;
         });
-        noRes.style.display = visible === 0 ? 'block' : 'none';
+        noResults.style.display = visible === 0 ? 'block' : 'none';
       }
 
-      filters.forEach(b => b.addEventListener('click', () => applyFilter(b.dataset.filter)));
-      sideCats.forEach(a => {
-        a.addEventListener('click', e => {
-          e.preventDefault();
-          applyFilter(a.dataset.scat);
-          document.getElementById('blogGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      function bindSidebarCats() {
+        document.querySelectorAll('.sidebar-cats a[data-scat]').forEach(a => {
+          a.addEventListener('click', e => {
+            e.preventDefault();
+            applyFilter(a.dataset.scat);
+            grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
         });
-      });
+      }
 
-      /* sidebar newsletter — calls shared API handler in script.js */
+      async function init() {
+        document.querySelectorAll('.blog-filter').forEach(b =>
+          b.addEventListener('click', () => applyFilter(b.dataset.filter)));
+        bindSidebarCats();
+
+        // Hide the demo featured card until real data arrives (restored on failure)
+        featured.hidden = true;
+
+        let posts = [];
+        try {
+          const res = await fetch(`${blog.API}/blogs?status=published`);
+          if (!res.ok) throw new Error('bad status');
+          const data = await res.json();
+          posts = Array.isArray(data) ? data : [];
+        } catch (err) {
+          // API unreachable — keep the static demo content as a fallback
+          featured.hidden = false;
+          return;
+        }
+
+        if (posts.length === 0) { featured.hidden = false; return; }
+
+        const top = posts.find(p => p.featured) || posts[0];
+        featured.href = blog.postUrl(top.slug);
+        featured.innerHTML = featuredHtml(top);
+        featured.hidden = false;
+
+        grid.querySelectorAll('.blog-card').forEach(c => c.remove());
+        grid.insertAdjacentHTML('afterbegin', posts.map(cardHtml).join(''));
+        renderSidebarCats(posts);
+      }
+
+      init();
     })();
   </script>
 </body>

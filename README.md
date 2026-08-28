@@ -1,14 +1,6 @@
 # Menos iT Consult — Website
 
-Official website for **Menos iT Consult**, an IT consulting company based in
-Agona, Western Region, Ghana. Plain HTML/CSS/JS frontend, Node.js + Express
-backend, and a custom admin dashboard.
-
-The **public site** (`/`), the **admin dashboard** (`/admin`) and the **API**
-(`/api/*`) are served from a **single host** with no cross-origin calls. Storage
-is **PostgreSQL** and auth is **stateless** (an httpOnly signed cookie), so the
-whole app deploys as **one Vercel Serverless Function** — no session store and
-no flat-file writes.
+Official website for **Menos iT Consult**, an IT consulting company based in Agona, Western Region, Ghana. Built with plain HTML/CSS/JS frontend, Node.js + Express backend, and a custom admin dashboard.
 
 ---
 
@@ -25,13 +17,14 @@ Menos-iT-Consult/
 │   │   ├── testimonials.html
 │   │   ├── contact.html
 │   │   ├── blog.html
+│   │   ├── blog-post.html          # Single-article page (fetches /api/blogs/slug/:slug)
 │   │   ├── privacy.html
 │   │   ├── terms.html
 │   │   ├── cookies.html
 │   │   └── 404.html
 │   └── assets/
 │       ├── css/                # Per-page stylesheets + base.css
-│       ├── js/                 # script.js, legal.js
+│       ├── js/                 # script.js, legal.js, blog.js
 │       ├── images/             # Static images
 │       └── favicon.svg
 │
@@ -90,8 +83,8 @@ cp .env.example .env
 ```
 
 ```env
-# PostgreSQL (required) — Vercel injects POSTGRES_URL automatically when you add its Postgres add-on
-POSTGRES_URL=postgresql://user:pass@localhost:5432/menos_it
+# PostgreSQL (required)
+DATABASE_URL=postgresql://user:pass@localhost:5432/menos_it
 
 # Mail (Nodemailer / Gmail SMTP)
 SMTP_HOST=smtp.gmail.com
@@ -283,6 +276,9 @@ vercel run backend/migrate.js
   what keeps everything on one host.
 - Each cold start opens its own Postgres connections through the `pg` Pool —
   fine for this site's scale.
+- The public blog at `/blog` and article pages at `/blog/<slug>` load published
+  posts from `GET /api/blogs?status=published` and `GET /api/blogs/slug/:slug`,
+  so posts published in the admin dashboard appear on the public site immediately.
 
 ---
 

@@ -75,6 +75,13 @@ PAGE_ROUTES.forEach(page => {
   });
 });
 
+// ── Blog article pages ─────────────────────────────────────────────────────
+// /blog/<slug> → public/pages/blog-post.html. The page fetches the post from
+// GET /api/blogs/slug/:slug (published only) and renders it client-side.
+app.get('/blog/:slug', (_req, res) => {
+  res.sendFile(path.join(PUBLIC, 'pages', 'blog-post.html'));
+});
+
 // ── 404 page ───────────────────────────────────────────────────────────────
 app.get('/404', (_req, res) => {
   res.status(404).sendFile(path.join(PUBLIC, 'pages', '404.html'));
@@ -85,10 +92,14 @@ app.get('/{*path}', (_req, res) => {
   res.status(404).sendFile(path.join(PUBLIC, 'pages', '404.html'));
 });
 
+  // Only start the HTTP server when run directly (`node server.js` / PM2).
+// When imported by api.js for Vercel, we just export the app (handler).
+if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`\n  Menos iT Consult — http://localhost:${PORT}`);
     console.log(`  Admin panel       — http://localhost:${PORT}/admin`);
     console.log(`  API health        — http://localhost:${PORT}/api/health\n`);
   });
+}
 
 module.exports = app;
