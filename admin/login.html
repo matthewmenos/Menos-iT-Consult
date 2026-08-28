@@ -71,7 +71,7 @@
       // Already signed in? Go straight to the dashboard.
       fetch('/api/auth/me', { credentials: 'include' })
         .then(function (r) { return r.json(); })
-        .then(function (d) { if (d.loggedIn) location.replace('index.html'); })
+        .then(function (d) { if (d.loggedIn) location.replace('/admin/'); })
         .catch(function () { /* server unreachable — let the user try anyway */ });
 
       form.addEventListener('submit', function (e) {

@@ -155,7 +155,7 @@ dashboard (`/admin`) and the API (`/api/*`) all share this single origin.
 | `http://localhost:3000/terms` | Terms of service |
 | `http://localhost:3000/cookies` | Cookie policy |
 | `http://localhost:3000/404` | 404 page |
-| `http://localhost:3000/admin` | Admin dashboard |
+| `http://localhost:3000/admin` | Admin dashboard (redirects to `/admin/login` when signed out) |
 | `http://localhost:3000/admin/login` | Admin login page |
 | `http://localhost:3000/api/health` | API health check |
 
