@@ -32,7 +32,8 @@ Menos-iT-Consult/
 │       └── favicon.svg
 │
 ├── admin/                      # Admin dashboard (SPA)
-│   ├── index.html
+│   ├── index.html              # Dashboard SPA (inline login overlay)
+│   ├── login.html              # Dedicated login page (/admin/login)
 │   ├── app.js
 │   ├── editor.js
 │   └── style.css
@@ -155,6 +156,7 @@ dashboard (`/admin`) and the API (`/api/*`) all share this single origin.
 | `http://localhost:3000/cookies` | Cookie policy |
 | `http://localhost:3000/404` | 404 page |
 | `http://localhost:3000/admin` | Admin dashboard |
+| `http://localhost:3000/admin/login` | Admin login page |
 | `http://localhost:3000/api/health` | API health check |
 
 ---

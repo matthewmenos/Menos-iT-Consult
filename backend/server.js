@@ -60,6 +60,9 @@ app.use(cookieParser(process.env.SESSION_SECRET));
 // (/admin/<anything> -> index.html) still work via the handlers below.
 app.get('/admin', (_req, res) => res.sendFile(path.join(ADMIN, 'index.html')));
 app.use('/admin', express.static(ADMIN, { redirect: false }));
+// Dedicated admin login page (served before the SPA fallback; /admin/login.html
+// is also served directly by the static handler above).
+app.get('/admin/login', (_req, res) => res.sendFile(path.join(ADMIN, 'login.html')));
 app.get('/admin/*path', (_req, res) => res.sendFile(path.join(ADMIN, 'index.html')));
 
 // ── API routes ─────────────────────────────────────────────────────────────

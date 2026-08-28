@@ -120,6 +120,15 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.3; }
   padding: 8px 12px;
 }
 
+.login-alt {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.login-alt a { color: var(--text-muted); }
+.login-alt a:hover { color: var(--blue); }
+
 /* ============================================================
    Dashboard Shell Layout
    ============================================================ */
