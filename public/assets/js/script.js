@@ -8,7 +8,9 @@
 
   /* ── Active nav link based on current page ── */
   const _seg = location.pathname.split('/').filter(Boolean).pop() || 'index';
-  const page = _seg.replace('.html', '');
+  // Mark the Blog item active on article pages too (/blog/<slug>)
+  let page = _seg.replace('.html', '');
+  if (page !== 'blog' && location.pathname.startsWith('/blog/')) page = 'blog';
   document.querySelectorAll('.nav-links a[data-page]').forEach(a => {
     if (a.dataset.page === page) a.classList.add('active');
   });

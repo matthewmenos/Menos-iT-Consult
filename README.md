@@ -148,9 +148,9 @@ dashboard (`/admin`) and the API (`/api/*`) all share this single origin.
 | `http://localhost:3000/services` | Services page |
 | `http://localhost:3000/portfolio` | Portfolio page |
 | `http://localhost:3000/testimonials` | Testimonials page |
-| `http://localhost:3003/contact` | Contact page |
+| `http://localhost:3000/contact` | Contact page |
 | `http://localhost:3000/blog` | Blog listing page |
-| `http://localhost:3000/blog/:id` | Individual blog post (handled client-side) |
+| `http://localhost:3000/blog/:slug` | Individual blog post |
 | `http://localhost:3000/privacy` | Privacy policy |
 | `http://localhost:3000/terms` | Terms of service |
 | `http://localhost:3000/cookies` | Cookie policy |
@@ -158,6 +158,10 @@ dashboard (`/admin`) and the API (`/api/*`) all share this single origin.
 | `http://localhost:3000/admin` | Admin dashboard |
 | `http://localhost:3000/admin/login` | Admin login page |
 | `http://localhost:3000/api/health` | API health check |
+
+> URLs are clean — pages use `/about`, `/blog`, etc., never `/about.html`.
+> Any `.html` URL (`/about.html`, `/pages/...`, `/index.html`) **301-redirects**
+> to its clean equivalent.
 
 ---
 

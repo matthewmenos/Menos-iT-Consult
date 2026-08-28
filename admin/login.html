@@ -92,7 +92,7 @@
           .then(function (res) { return res.json(); })
           .then(function (data) {
             if (data.success) {
-              location.href = 'index.html'; // dashboard SPA
+              location.href = '/admin'; // dashboard SPA
             } else {
               showError(data.error || 'Invalid username or password.');
             }
