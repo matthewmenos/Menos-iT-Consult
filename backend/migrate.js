@@ -67,6 +67,72 @@ async function main() {
   }
   console.log('Subscribers migrated: ' + subsAdded + '/' + subs.length);
 
+  // ── testimonials ──
+  const testimonials = readJson('testimonials.json', []);
+  let tstAdded = 0;
+  for (const t of testimonials) {
+    if (!t.id || !t.quote) continue;
+    const exists = await db.getTestimonial(t.id);
+    if (!exists) {
+      await db.createTestimonial({
+        id: t.id,
+        name: t.name || '',
+        role: t.role || '',
+        company: t.company || '',
+        location: t.location || '',
+        rating: t.rating || 5,
+        quote: t.quote,
+        featured: !!t.featured,
+        status: t.status || 'published',
+        createdAt: t.createdAt,
+      });
+      tstAdded++;
+    }
+  }
+  console.log('Testimonials migrated: ' + tstAdded + '/' + testimonials.length);
+
+  // ── projects ──
+  const projects = readJson('projects.json', []);
+  let prjAdded = 0;
+  for (const p of projects) {
+    if (!p.id || !p.title) continue;
+    const exists = await db.getProject(p.id);
+    if (!exists) {
+      await db.createProject({
+        id: p.id,
+        title: p.title,
+        category: p.category || '',
+        client: p.client || '',
+        location: p.location || '',
+        description: p.description || '',
+        outcomes: Array.isArray(p.outcomes) ? p.outcomes : [],
+        year: p.year || '',
+        featured: !!p.featured,
+        status: p.status || 'published',
+        createdAt: p.createdAt,
+      });
+      prjAdded++;
+    }
+  }
+  console.log('Projects migrated: ' + prjAdded + '/' + projects.length);
+
+  // ── settings (defaults; skipped if already set) ──
+  const existingStats = await db.getSetting('stats');
+  if (!existingStats) {
+    await db.setSetting('stats', { clients: 150, years: 12, satisfaction: 98, projects: 150 });
+    console.log('Default stats seeded.');
+  }
+  const existingContact = await db.getSetting('contact');
+  if (!existingContact) {
+    await db.setSetting('contact', {
+      email: 'minnahmat50@gmail.com',
+      phone: '+233 549 128 384',
+      whatsapp: '233549128384',
+      location: 'Agona, Western Region, Ghana',
+    });
+    console.log('Default contact info seeded.');
+  }
+
   console.log('Migration complete.');
   process.exit(0);
 }

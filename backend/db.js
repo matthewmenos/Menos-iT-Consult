@@ -72,6 +72,51 @@ function mapMessage(r) {
 function mapSubscriber(r) {
   return { email: r.email, subscribedAt: iso(r.subscribed_at) };
 }
+function mapTestimonial(r) {
+  return {
+    id: r.id,
+    name: r.name,
+    role: r.role,
+    company: r.company,
+    location: r.location,
+    quote: r.quote,
+    rating: r.rating != null ? Number(r.rating) : 5,
+    featured: !!r.featured,
+    status: r.status,
+    createdAt: iso(r.created_at),
+    updatedAt: iso(r.updated_at),
+  };
+}
+function mapProject(r) {
+  let outcomes = [];
+  if (r.outcomes != null) {
+    if (typeof r.outcomes === 'string') {
+      try { outcomes = JSON.parse(r.outcomes); } catch { outcomes = []; }
+    } else if (Array.isArray(r.outcomes)) {
+      outcomes = r.outcomes;
+    }
+  }
+  return {
+    id: r.id,
+    title: r.title,
+    category: r.category,
+    client: r.client,
+    location: r.location,
+    description: r.description,
+    outcomes: Array.isArray(outcomes) ? outcomes : [],
+    year: r.year,
+    featured: !!r.featured,
+    status: r.status,
+    createdAt: iso(r.created_at),
+    updatedAt: iso(r.updated_at),
+  };
+}
+// ── settings (key → jsonb value) ───────────────────────────────────────────
+function mapSetting(r) {
+  let v = r.value;
+  if (typeof v === 'string') { try { v = JSON.parse(v); } catch { /* keep raw */ } }
+  return { key: r.key, value: v };
+}
 
 // ── schema ─────────────────────────────────────────────────────────────────
 async function initDb() {
@@ -105,6 +150,24 @@ async function initDb() {
     await q(`CREATE TABLE IF NOT EXISTS subscribers (
     email text PRIMARY KEY,
     subscribed_at timestamptz DEFAULT now()
+  );`);
+  await q(`CREATE TABLE IF NOT EXISTS testimonials (
+    id text PRIMARY KEY,
+    created_at timestamptz DEFAULT now(),
+    name text, role text, company text, location text,
+    rating int DEFAULT 5, quote text,
+    featured boolean DEFAULT false, status text DEFAULT 'published'
+  );`);
+  await q(`CREATE TABLE IF NOT EXISTS projects (
+    id text PRIMARY KEY,
+    created_at timestamptz DEFAULT now(),
+    title text, category text, client text, location text,
+    description text, outcomes jsonb DEFAULT '[]'::jsonb,
+    year text, featured boolean DEFAULT false, status text DEFAULT 'published'
+  );`);
+  await q(`CREATE TABLE IF NOT EXISTS settings (
+    key text PRIMARY KEY,
+    value jsonb
   );`);
   console.log('[db] tables ensured');
 }
@@ -214,6 +277,133 @@ async function deleteSubscriber(email) {
   await needPool().query('DELETE FROM subscribers WHERE email = $1', [email]);
 }
 
+// ── testimonials ───────────────────────────────────────────────────────────
+async function getTestimonials() {
+  const { rows } = await needPool().query('SELECT * FROM testimonials ORDER BY created_at DESC');
+  return rows.map(mapTestimonial);
+}
+async function getTestimonial(id) {
+  const { rows } = await needPool().query('SELECT * FROM testimonials WHERE id = $1', [id]);
+  return rows[0] ? mapTestimonial(rows[0]) : null;
+}
+async function createTestimonial(t) {
+  const { rows } = await needPool().query(
+    `INSERT INTO testimonials
+      (id, created_at, name, role, company, location, rating, quote, featured, status)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+    [
+      t.id, t.createdAt || new Date().toISOString(), t.name, t.role || '',
+      t.company || '', t.location || '', t.rating || 5, t.quote,
+      !!t.featured, t.status || 'published',
+    ]
+  );
+  return mapTestimonial(rows[0]);
+}
+async function updateTestimonial(id, t) {
+  const { rows } = await needPool().query(
+    `UPDATE testimonials
+        SET name=$1, role=$2, company=$3, location=$4, rating=$5,
+            quote=$6, featured=$7, status=$8
+      WHERE id=$9 RETURNING *`,
+    [
+      t.name, t.role || '', t.company || '', t.location || '',
+      t.rating || 5, t.quote, !!t.featured, t.status || 'published', id,
+    ]
+  );
+  return rows[0] ? mapTestimonial(rows[0]) : null;
+}
+async function deleteTestimonial(id) {
+  await needPool().query('DELETE FROM testimonials WHERE id = $1', [id]);
+}
+async function setTestimonialStatus(id, status) {
+  const { rows } = await needPool().query(
+    'UPDATE testimonials SET status=$1 WHERE id=$2 RETURNING *',
+    [status, id]
+  );
+  return rows[0] ? mapTestimonial(rows[0]) : null;
+}
+
+// ── projects ───────────────────────────────────────────────────────────────
+async function getProjects() {
+  const { rows } = await needPool().query('SELECT * FROM projects ORDER BY created_at DESC');
+  return rows.map(mapProject);
+}
+async function getProject(id) {
+  const { rows } = await needPool().query('SELECT * FROM projects WHERE id = $1', [id]);
+  return rows[0] ? mapProject(rows[0]) : null;
+}
+async function createProject(p) {
+  const { rows } = await needPool().query(
+    `INSERT INTO projects
+      (id, created_at, title, category, client, location, description, outcomes, year, featured, status)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+    [
+      p.id, p.createdAt || new Date().toISOString(), p.title, p.category || '',
+      p.client || '', p.location || '', p.description || '',
+      JSON.stringify(Array.isArray(p.outcomes) ? p.outcomes : []),
+      p.year || '', !!p.featured, p.status || 'published',
+    ]
+  );
+  return mapProject(rows[0]);
+}
+async function updateProject(id, p) {
+  const { rows } = await needPool().query(
+    `UPDATE projects
+        SET title=$1, category=$2, client=$3, location=$4, description=$5,
+            outcomes=$6, year=$7, featured=$8, status=$9
+      WHERE id=$10 RETURNING *`,
+    [
+      p.title, p.category || '', p.client || '', p.location || '',
+      p.description || '',
+      JSON.stringify(Array.isArray(p.outcomes) ? p.outcomes : []),
+      p.year || '', !!p.featured, p.status || 'published', id,
+    ]
+  );
+  return rows[0] ? mapProject(rows[0]) : null;
+}
+async function deleteProject(id) {
+  await needPool().query('DELETE FROM projects WHERE id = $1', [id]);
+}
+async function setProjectStatus(id, status) {
+  const { rows } = await needPool().query(
+    'UPDATE projects SET status=$1 WHERE id=$2 RETURNING *',
+    [status, id]
+  );
+  return rows[0] ? mapProject(rows[0]) : null;
+}
+
+// ── settings ───────────────────────────────────────────────────────────────
+async function getSettings() {
+  const { rows } = await needPool().query('SELECT * FROM settings');
+  return rows.map(mapSetting);
+}
+async function upsertSettings(entries) {
+  const values = [];
+  const tuples = entries.map(([key, value], i) => {
+    values.push(key, JSON.stringify(value));
+    return `($${i * 2 + 1}::text, $${i * 2 + 2}::jsonb)`;
+  });
+  if (tuples.length === 0) return;
+  await needPool().query(
+    `INSERT INTO settings (key, value) VALUES ${tuples.join(', ')}
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    values
+  );
+}
+async function getSetting(key) {
+  const { rows } = await needPool().query('SELECT * FROM settings WHERE key = $1', [key]);
+  return rows[0] ? mapSetting(rows[0]) : null;
+}
+async function setSetting(key, value) {
+  const { rows } = await needPool().query(
+    `INSERT INTO settings (key, value) VALUES ($1, $2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
+     RETURNING *`,
+    [key, JSON.stringify(value)]
+  );
+  return mapSetting(rows[0]);
+}
+
 // ── admin ───────────────────────────────────────────────────────────────────
 async function getAdmin() {
   const { rows } = await needPool().query('SELECT * FROM admin WHERE username = $1', ['admin']);
@@ -234,5 +424,8 @@ module.exports = {
   getBlogs, getBlog, getBlogBySlug, createBlog, updateBlog, deleteBlog, setBlogStatus,
   getMessages, getMessage, deleteMessage, markMessageRead, saveMessage,
   getSubscribers, addSubscriber, deleteSubscriber,
+  getTestimonials, getTestimonial, createTestimonial, updateTestimonial, deleteTestimonial, setTestimonialStatus,
+  getProjects, getProject, createProject, updateProject, deleteProject, setProjectStatus,
+  getSettings, getSetting, setSetting, upsertSettings,
   getAdmin, updateAdminPassword,
 };

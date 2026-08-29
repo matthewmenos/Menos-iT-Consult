@@ -59,6 +59,10 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           Testimonials
         </a>
+        <a href="#" class="nav-item" data-section="projects">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Projects
+        </a>
         <a href="#" class="nav-item" data-section="settings">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           Settings
@@ -204,32 +208,100 @@
         <section id="section-testimonials" class="section" style="display:none">
           <div class="section-header">
             <h3>Testimonials</h3>
+            <button class="btn btn-primary" id="new-testimonial-btn">+ New Testimonial</button>
           </div>
-          <div class="info-card">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <p>Testimonials are currently hardcoded in the website HTML. Future versions will support dynamic testimonials managed from this dashboard.</p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Company</th>
+                  <th>Rating</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="testimonials-tbody">
+                <tr><td colspan="5" class="empty-row">Loading...</td></tr>
+              </tbody>
+            </table>
           </div>
-          <div class="testimonials-list" id="testimonials-list">
-            <div class="testimonial-item">
-              <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-              <p class="testimonial-text">"Menos iT transformed our entire IT infrastructure. Professional, responsive, and incredibly knowledgeable."</p>
-              <div class="testimonial-author">Sarah M. — Operations Manager</div>
-            </div>
-            <div class="testimonial-item">
-              <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-              <p class="testimonial-text">"Outstanding cybersecurity implementation. We feel completely protected now."</p>
-              <div class="testimonial-author">David K. — IT Director</div>
-            </div>
-            <div class="testimonial-item">
-              <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-              <p class="testimonial-text">"Their cloud migration service was seamless. Zero downtime, excellent communication throughout."</p>
-              <div class="testimonial-author">Lisa R. — CEO</div>
-            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="section-projects" class="section" style="display:none">
+          <div class="section-header">
+            <h3>Portfolio Projects</h3>
+            <button class="btn btn-primary" id="new-project-btn">+ New Project</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Client</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="projects-tbody">
+                <tr><td colspan="5" class="empty-row">Loading...</td></tr>
+              </tbody>
+            </table>
           </div>
         </section>
 
         <!-- Settings Section -->
         <section id="section-settings" class="section" style="display:none">
+          <div class="settings-card">
+            <h3>Site Content</h3>
+            <p class="settings-hint">Stats and contact details shown across the public website (homepage counters, contact page, footer).</p>
+            <form id="content-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Clients served</label>
+                  <input type="number" id="stat-clients" min="0" required>
+                </div>
+                <div class="form-group">
+                  <label>Years experience</label>
+                  <input type="number" id="stat-years" min="0" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Satisfaction rate (%)</label>
+                  <input type="number" id="stat-satisfaction" min="0" max="100" required>
+                </div>
+                <div class="form-group">
+                  <label>Projects completed</label>
+                  <input type="number" id="stat-projects" min="0" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Contact email</label>
+                  <input type="email" id="contact-email" required>
+                </div>
+                <div class="form-group">
+                  <label>Phone</label>
+                  <input type="text" id="contact-phone" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>WhatsApp number (digits only)</label>
+                  <input type="text" id="contact-whatsapp" required>
+                </div>
+                <div class="form-group">
+                  <label>Location</label>
+                  <input type="text" id="contact-location" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Site Content</button>
+            </form>
+          </div>
+
           <div class="settings-card">
             <h3>Change Password</h3>
             <form id="password-form">
@@ -335,6 +407,143 @@
       <div class="modal-body" id="message-detail-body"></div>
       <div class="modal-footer">
         <button class="btn btn-secondary" id="close-msg-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonial Modal -->
+  <div id="testimonial-modal" class="modal" style="display:none">
+    <div class="modal-overlay" id="testimonial-modal-overlay"></div>
+    <div class="modal-dialog modal-large">
+      <div class="modal-header">
+        <h3 id="testimonial-modal-title">New Testimonial</h3>
+        <button class="modal-close" id="close-testimonial-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Name *</label>
+            <input type="text" id="tst-name" placeholder="Client full name" required>
+          </div>
+          <div class="form-group flex-1">
+            <label>Role / Title</label>
+            <input type="text" id="tst-role" placeholder="Owner, Manager...">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Company</label>
+            <input type="text" id="tst-company" placeholder="Company name">
+          </div>
+          <div class="form-group flex-1">
+            <label>Location</label>
+            <input type="text" id="tst-location" placeholder="Takoradi, Ghana">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Rating</label>
+            <select id="tst-rating">
+              <option value="5" selected>★★★★★ (5)</option>
+              <option value="4">★★★★ (4)</option>
+              <option value="3">★★★ (3)</option>
+              <option value="2">★★ (2)</option>
+              <option value="1">★ (1)</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label>Status</label>
+            <select id="tst-status">
+              <option value="published" selected>Published</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
+          <div class="form-group flex-1 checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="tst-featured">
+              <span>Featured</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Quote *</label>
+          <textarea id="tst-quote" rows="5" placeholder="What the client said..." required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-testimonial-btn">Cancel</button>
+        <button class="btn btn-primary" id="save-testimonial-btn">Save Testimonial</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Modal -->
+  <div id="project-modal" class="modal" style="display:none">
+    <div class="modal-overlay" id="project-modal-overlay"></div>
+    <div class="modal-dialog modal-large">
+      <div class="modal-header">
+        <h3 id="project-modal-title">New Project</h3>
+        <button class="modal-close" id="close-project-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Project title *</label>
+          <input type="text" id="prj-title" placeholder="Project title..." required>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Category</label>
+            <select id="prj-category">
+              <option value="network">Network</option>
+              <option value="security">Cybersecurity</option>
+              <option value="cloud">Cloud</option>
+              <option value="webdev">Web Dev</option>
+              <option value="softdev">Software Dev</option>
+              <option value="consult">Consulting</option>
+              <option value="support">IT Support</option>
+              <option value="data">Data</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label>Year</label>
+            <input type="text" id="prj-year" placeholder="2024">
+          </div>
+          <div class="form-group flex-1">
+            <label>Status</label>
+            <select id="prj-status">
+              <option value="published" selected>Published</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Client</label>
+            <input type="text" id="prj-client" placeholder="Client name">
+          </div>
+          <div class="form-group flex-1">
+            <label>Location</label>
+            <input type="text" id="prj-location" placeholder="Agona, Ghana">
+          </div>
+          <div class="form-group flex-1 checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="prj-featured">
+              <span>Featured</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="prj-description" rows="4" placeholder="What was done, and the outcome..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Outcomes (one per line, max 8)</label>
+          <textarea id="prj-outcomes" rows="3" placeholder="40 % cost saving&#10;Automated backups"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-project-btn">Cancel</button>
+        <button class="btn btn-primary" id="save-project-btn">Save Project</button>
       </div>
     </div>
   </div>

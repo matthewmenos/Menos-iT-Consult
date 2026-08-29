@@ -177,7 +177,21 @@ Access at `http://localhost:3000/admin`
 | Blog Posts | Create, edit, delete, publish/unpublish posts |
 | Messages | Read and manage contact form submissions |
 | Newsletter | View and remove subscribers |
-| Settings | Change admin password |
+| Testimonials | Create, edit, publish/unpublish, delete client reviews — shown on `/testimonials` and the homepage |
+| Projects | Create, edit, publish/unpublish, delete portfolio case studies — shown on `/portfolio` |
+| Settings | Change admin password; edit site stats, WhatsApp number, and contact info |
+
+### Site content pipeline
+
+Admin-managed content reaches the public site through read-only content routes:
+
+- `GET /api/content/testimonials` — published testimonials
+- `GET /api/content/projects` — published projects
+- `GET /api/content/settings` — site settings (stats counters, WhatsApp/location)
+
+`public/assets/js/site-content.js` fetches these and re-renders the pages. If the
+API is unreachable or returns nothing, the pages keep their built-in static
+content, so the site never breaks without a database.
 
 ---
 

@@ -440,7 +440,7 @@
       </div>
       <div class="footer-bottom">
         <p>© 2025 Menos iT Consult. All rights reserved.</p>
-        <p>Agona, Western Region, Ghana</p>
+        <p data-contact="location">Agona, Western Region, Ghana</p>
       </div>
     </div>
   </footer>
@@ -465,11 +465,13 @@
   </div>
 
   <script src="../assets/js/script.js"></script>
+  <script src="../assets/js/site-content.js"></script>
   <script>
     /* ── Portfolio filter ── */
     (() => {
+      /* Re-queries cards on every click so filtering works with both the
+         static cards and admin-managed cards rendered by site-content.js */
       const filters = document.querySelectorAll('.pf-filter');
-      const cards   = document.querySelectorAll('.pf-grid .pf-card');
       const noRes   = document.getElementById('pfNoResults');
 
       filters.forEach(btn => {
@@ -480,13 +482,13 @@
           const cat = btn.dataset.filter;
           let visible = 0;
 
-          cards.forEach(card => {
+          document.querySelectorAll('.pf-grid .pf-card').forEach(card => {
             const match = cat === 'all' || card.dataset.cat === cat;
             card.style.display = match ? '' : 'none';
             if (match) visible++;
           });
 
-          noRes.style.display = visible === 0 ? 'block' : 'none';
+          if (noRes) noRes.style.display = visible === 0 ? 'block' : 'none';
         });
       });
     })();

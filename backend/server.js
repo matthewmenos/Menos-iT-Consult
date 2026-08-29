@@ -12,6 +12,8 @@ const newsletterRoute = require('./routes/newsletter');
 const authRoute       = require('./routes/auth');
 const blogsRoute      = require('./routes/blogs');
 const messagesRoute   = require('./routes/messages');
+const contentRoute    = require('./routes/content');
+const manageRoute     = require('./routes/manage');
 
 const app  = express();
 app.set('trust proxy', 1); // behind Nginx/Vercel - respect X-Forwarded-* headers
@@ -83,6 +85,8 @@ app.use('/api/contact',    contactRoute);
 app.use('/api/newsletter', newsletterRoute);
 app.use('/api/blogs',      blogsRoute);
 app.use('/api/messages',   messagesRoute);
+app.use('/api/content',    contentRoute);   // public read-only site content
+app.use('/api/manage',     manageRoute);    // admin CRUD (auth required)
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
 // -- Clean URL page routes: /about -> public/pages/about.html, etc. ------------
