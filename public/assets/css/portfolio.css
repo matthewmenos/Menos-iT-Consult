@@ -42,6 +42,11 @@
 .pf-visual svg.pf-illustration {
   width: 100px; height: 100px; color: var(--blue); opacity: .25;
 }
+/* admin-uploaded cover image */
+.pf-visual img.pf-img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
 .pf-tag {
   position: absolute; top: 14px; left: 14px;
   font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em;

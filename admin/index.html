@@ -469,6 +469,18 @@
           <label>Quote *</label>
           <textarea id="tst-quote" rows="5" placeholder="What the client said..." required></textarea>
         </div>
+        <div class="form-group">
+          <label>Profile photo</label>
+          <div class="image-picker">
+            <img id="tst-image-preview" class="image-preview" alt="Profile photo preview" hidden>
+            <div class="image-placeholder" id="tst-image-placeholder">No photo chosen</div>
+            <div class="image-picker-actions">
+              <input type="file" id="tst-image-file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden>
+              <button type="button" class="btn btn-sm btn-secondary" id="tst-image-choose">Choose photo</button>
+              <button type="button" class="btn btn-sm btn-danger" id="tst-image-remove" hidden>Remove</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" id="cancel-testimonial-btn">Cancel</button>
@@ -539,6 +551,18 @@
         <div class="form-group">
           <label>Outcomes (one per line, max 8)</label>
           <textarea id="prj-outcomes" rows="3" placeholder="40 % cost saving&#10;Automated backups"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Project image (cover)</label>
+          <div class="image-picker">
+            <img id="prj-image-preview" class="image-preview" alt="Project image preview" hidden>
+            <div class="image-placeholder" id="prj-image-placeholder">No image chosen</div>
+            <div class="image-picker-actions">
+              <input type="file" id="prj-image-file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden>
+              <button type="button" class="btn btn-sm btn-secondary" id="prj-image-choose">Choose image</button>
+              <button type="button" class="btn btn-sm btn-danger" id="prj-image-remove" hidden>Remove</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">

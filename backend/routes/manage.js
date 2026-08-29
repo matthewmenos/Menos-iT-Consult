@@ -34,6 +34,32 @@ function cleanStatus(v, fallback) {
   if (v === 'draft' || v === 'published') return v;
   return fallback;
 }
+// image = our own /api/images/:id URL (set by the upload endpoint) or a remote URL
+function cleanImage(v) {
+  const s = cleanStr(v);
+  if (!s) return '';
+  return /^\/api\/images\//.test(s) || /^https:\/\//.test(s) ? s.slice(0, 500) : '';
+}
+
+// ── uploads ─────────────────────────────────────────────────────────────────
+// The client sends the raw image bytes as the request body (Content-Type:
+// image/jpeg etc.) — no multipart parser needed. Returns { id, url }.
+router.post(
+  '/upload',
+  express.raw({ type: () => true, limit: '4mb' }),
+  async (req, res) => {
+    try {
+      const mime = (req.headers['content-type'] || '').split(';')[0].trim();
+      const saved = await db.saveImage(req.body, mime);
+      res.status(201).json(saved);
+    } catch (err) {
+      if (err.badRequest) return res.status(400).json({ error: err.message });
+      if (err.noDb) return res.status(503).json({ error: err.message });
+      console.error(err);
+      res.status(500).json({ error: 'Failed to upload image.' });
+    }
+  }
+);
 
 // ── testimonials ───────────────────────────────────────────────────────────
 router.get('/testimonials', async (req, res) => {
@@ -55,6 +81,7 @@ router.post('/testimonials', async (req, res) => {
       location: cleanStr(b.location).slice(0, 120),
       rating: clampRating(b.rating, 5),
       quote: cleanStr(b.quote).slice(0, 2000),
+      image: cleanImage(b.image),
       featured: !!b.featured,
       status: cleanStatus(b.status, 'published'),
       createdAt: new Date().toISOString(),
@@ -83,6 +110,7 @@ router.put('/testimonials/:id', async (req, res) => {
       location: cleanStr(b.location),
       rating: clampRating(b.rating, existing.rating),
       quote: cleanStr(b.quote) || existing.quote,
+      image: b.image === undefined ? existing.image : cleanImage(b.image),
       featured: b.featured === undefined ? existing.featured : !!b.featured,
       status: cleanStatus(b.status, existing.status),
     });
@@ -124,6 +152,7 @@ router.post('/projects', async (req, res) => {
       client: cleanStr(b.client).slice(0, 120),
       location: cleanStr(b.location).slice(0, 120),
       description: cleanStr(b.description).slice(0, 4000),
+      image: cleanImage(b.image),
       outcomes: cleanOutcomes(b.outcomes, []),
       year: cleanStr(b.year).slice(0, 10),
       featured: !!b.featured,
@@ -153,6 +182,7 @@ router.put('/projects/:id', async (req, res) => {
       client: cleanStr(b.client),
       location: cleanStr(b.location),
       description: cleanStr(b.description),
+      image: b.image === undefined ? existing.image : cleanImage(b.image),
       outcomes: cleanOutcomes(b.outcomes, existing.outcomes),
       year: cleanStr(b.year),
       featured: b.featured === undefined ? existing.featured : !!b.featured,

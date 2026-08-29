@@ -533,6 +533,7 @@ function resetTestimonialForm() {
   document.getElementById('tst-rating').value = '5';
   document.getElementById('tst-status').value = 'published';
   document.getElementById('tst-featured').checked = false;
+  tstPicker.reset();
 }
 
 function fillTestimonialForm(t) {
@@ -545,6 +546,7 @@ function fillTestimonialForm(t) {
   document.getElementById('tst-status').value = t.status === 'draft' ? 'draft' : 'published';
   document.getElementById('tst-featured').checked = !!t.featured;
   document.getElementById('tst-quote').value = t.quote || '';
+  tstPicker.set(t.image || '');
 }
 
 function editTestimonial(id) {
@@ -573,6 +575,8 @@ async function saveTestimonial() {
   btn.disabled = true;
   btn.textContent = 'Saving...';
   try {
+    if (tstPicker.pendingFile()) payload.image = await uploadImageFile(tstPicker.pendingFile());
+    else if (tstPicker.isRemoved()) payload.image = '';
     const res = await fetch(
       currentTestId ? `${API}/api/manage/testimonials/${currentTestId}` : `${API}/api/manage/testimonials`,
       {
@@ -691,6 +695,7 @@ function resetProjectForm() {
   document.getElementById('prj-category').value = 'webdev';
   document.getElementById('prj-status').value = 'published';
   document.getElementById('prj-featured').checked = false;
+  prjPicker.reset();
 }
 
 function fillProjectForm(p) {
@@ -704,6 +709,7 @@ function fillProjectForm(p) {
   document.getElementById('prj-featured').checked = !!p.featured;
   document.getElementById('prj-description').value = p.description || '';
   document.getElementById('prj-outcomes').value = Array.isArray(p.outcomes) ? p.outcomes.join('\n') : '';
+  prjPicker.set(p.image || '');
 }
 
 function editProject(id) {
@@ -733,6 +739,8 @@ async function saveProject() {
   btn.disabled = true;
   btn.textContent = 'Saving...';
   try {
+    if (prjPicker.pendingFile()) payload.image = await uploadImageFile(prjPicker.pendingFile());
+    else if (prjPicker.isRemoved()) payload.image = '';
     const res = await fetch(
       currentProjectId ? `${API}/api/manage/projects/${currentProjectId}` : `${API}/api/manage/projects`,
       {
@@ -782,6 +790,88 @@ async function deleteProject(id) {
     else showToast('Failed to delete.', 'error');
   } catch { showToast('Network error.', 'error'); }
 }
+
+// ─────────────────────────────────────────────
+// Image pickers (project cover / testimonial photo)
+// ─────────────────────────────────────────────
+async function uploadImageFile(file) {
+  const res = await fetch(`${API}/api/manage/upload`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    body: file,
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error || 'Image upload failed.');
+  }
+  return (await res.json()).url;
+}
+
+const MAX_IMAGE_MB = 4;
+
+function createImagePicker(prefix) {
+  const preview  = document.getElementById(`${prefix}-image-preview`);
+  const placeholder = document.getElementById(`${prefix}-image-placeholder`);
+  const fileInput   = document.getElementById(`${prefix}-image-file`);
+  const chooseBtn   = document.getElementById(`${prefix}-image-choose`);
+  const removeBtn   = document.getElementById(`${prefix}-image-remove`);
+  let current = '';      // image URL stored on the record
+  let file    = null;    // new file chosen but not yet uploaded
+  let removed = false;   // existing image was removed
+
+  function render(localPreviewUrl) {
+    if (localPreviewUrl) {
+      preview.src = localPreviewUrl;
+      preview.hidden = false;
+      placeholder.hidden = true;
+    } else {
+      preview.hidden = true;
+      preview.src = '';
+      placeholder.hidden = false;
+      placeholder.textContent = current && !removed ? 'Current image set' : 'No image chosen';
+    }
+    removeBtn.hidden = !(current && !removed) && !localPreviewUrl;
+  }
+
+  chooseBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files && fileInput.files[0];
+    if (!f) return;
+    if (f.size > MAX_IMAGE_MB * 1024 * 1024) {
+      showToast(`Image too large (max ${MAX_IMAGE_MB} MB).`, 'error');
+      fileInput.value = '';
+      return;
+    }
+    file = f;
+    removed = false;
+    const reader = new FileReader();
+    reader.onload = () => render(reader.result);
+    reader.readAsDataURL(f);
+  });
+  removeBtn.addEventListener('click', () => {
+    file = null;
+    removed = true;
+    fileInput.value = '';
+    render('');
+  });
+
+  return {
+    set(url) {
+      current = url || '';
+      file = null;
+      removed = false;
+      fileInput.value = '';
+      render(current || '');
+    },
+    reset() { this.set(''); },
+    pendingFile() { return file; },
+    isRemoved() { return removed && !file; },
+  };
+}
+
+const tstPicker = createImagePicker('tst');
+const prjPicker = createImagePicker('prj');
 
 // Project modal controls
 document.getElementById('new-project-btn').addEventListener('click', () => {

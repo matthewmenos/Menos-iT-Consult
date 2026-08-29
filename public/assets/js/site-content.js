@@ -95,13 +95,16 @@
 
   function renderTestimonial(t) {
     const meta = [t.role, t.company].filter(Boolean).join(', ');
+    const avatar = t.image
+      ? '<img class="tcard-av tcard-av-img" src="' + esc(t.image) + '" alt="' + esc(t.name) + '" loading="lazy">'
+      : '<div class="tcard-av" style="--h:' + hueFor(t.name || 'm') + '">' + esc(initialsOf(t.name)) + '</div>';
     const where = t.location ? ' · ' + esc(t.location) : '';
     return (
       '<div class="tcard reveal visible">' +
       '<div class="tcard-stars">' + starsHtml(t.rating) + '</div>' +
       '<p>"' + esc(t.quote) + '"</p>' +
       '<div class="tcard-author">' +
-      '<div class="tcard-av" style="--h:' + hueFor(t.name || 'm') + '">' + esc(initialsOf(t.name)) + '</div>' +
+      avatar +
       '<div><strong>' + esc(t.name) + '</strong>' +
       '<span>' + esc(meta) + where + '</span></div>' +
       '</div></div>'
@@ -143,13 +146,16 @@
   function renderProject(p) {
     const svg = CAT_SVGS[p.category] || CAT_SVGS.consult;
     const label = CAT_LABELS[p.category] || 'Project';
+    const visual = p.image
+      ? '<img class="pf-img" src="' + esc(p.image) + '" alt="' + esc(p.title) + '" loading="lazy">'
+      : '<svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' + svg + '</svg>';
     const outcomes = Array.isArray(p.outcomes) ? p.outcomes : [];
     const tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
     const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
     return (
       '<div class="pf-card' + (p.featured ? ' pf-featured' : '') + ' reveal visible" data-cat="' + esc(p.category) + '">' +
       '<div class="pf-visual">' +
-      '<svg class="pf-illustration" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' + svg + '</svg>' +
+      visual +
       '<span class="pf-tag tag-' + esc(p.category) + '">' + esc(label) + '</span>' +
       '</div>' +
       '<div class="pf-body">' +

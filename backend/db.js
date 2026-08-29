@@ -3,8 +3,8 @@
  *
  * Exposes small async DAOs that return objects in the SAME camelCase shape the
  * rest of the app already expects (id/title/slug/readTime/...). This lets every
- * route file stay almost identical — it just `await`s the DAO instead of
- * reading/writing JSON files — and keeps storage in Postgres so writes survive
+ * route file stay almost identical â€” it just `await`s the DAO instead of
+ * reading/writing JSON files â€” and keeps storage in Postgres so writes survive
  * Vercel's read-only filesystem and cross cold start.
  */
 // Load `pg` on demand so the app still boots (for static serving / local dev)
@@ -35,18 +35,19 @@ function needPool() {
 
 function noDbError() {
   const err = new Error(
-    'Database not configured. Set POSTGRES_URL (Vercel → Settings → Environment Variables) and redeploy.'
+    'Database not configured. Set POSTGRES_URL (Vercel â†’ Settings â†’ Environment Variables) and redeploy.'
   );
   err.noDb = true;
   return err;
 }
 
-// ── data dir across deployment layouts (used by first-boot seeding) ────────
+// â”€â”€ data dir across deployment layouts (used by first-boot seeding) â”€â”€â”€â”€â”€â”€â”€â”€
 // local/PM2: backend/db.js -> ./data;  Vercel: includeFiles copies
 // backend/data/** to <lambda>/backend/data, and the bundled handler's
 // __dirname is <lambda>/api (same rule server.js uses for public/admin).
 const fs   = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const DATA_DIR = (() => {
   const candidates = [
     path.join(__dirname, 'data'),
@@ -68,8 +69,8 @@ function readSeedJson(file, fallback) {
   }
 }
 
-// ── one-time bootstrap: create tables + seed on the first query ────────────
-// Deploying with POSTGRES_URL set is enough — no manual `node migrate.js`
+// â”€â”€ one-time bootstrap: create tables + seed on the first query â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Deploying with POSTGRES_URL set is enough â€” no manual `node migrate.js`
 // needed. Failures (e.g. transient network) reset the promise so the next
 // request retries.
 let readyPromise  = null;
@@ -116,7 +117,7 @@ function iso(v) {
   return new Date(v).toISOString();
 }
 
-// ── row → camelCase mappers ────────────────────────────────────────────────
+// â”€â”€ row â†’ camelCase mappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function mapBlog(r) {
   return {
     id: r.id,
@@ -156,6 +157,7 @@ function mapTestimonial(r) {
     company: r.company,
     location: r.location,
     quote: r.quote,
+    image: r.image || '',
     rating: r.rating != null ? Number(r.rating) : 5,
     featured: !!r.featured,
     status: r.status,
@@ -179,6 +181,7 @@ function mapProject(r) {
     client: r.client,
     location: r.location,
     description: r.description,
+    image: r.image || '',
     outcomes: Array.isArray(outcomes) ? outcomes : [],
     year: r.year,
     featured: !!r.featured,
@@ -187,18 +190,18 @@ function mapProject(r) {
     updatedAt: iso(r.updated_at),
   };
 }
-// ── settings (key → jsonb value) ───────────────────────────────────────────
+// â”€â”€ settings (key â†’ jsonb value) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function mapSetting(r) {
   let v = r.value;
   if (typeof v === 'string') { try { v = JSON.parse(v); } catch { /* keep raw */ } }
   return { key: r.key, value: v };
 }
 
-// ── schema ─────────────────────────────────────────────────────────────────
+// â”€â”€ schema â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function initDb() {
   if (!pool) {
     console.warn(
-      '[db] POSTGRES_URL not set — persistence disabled (static/API serving still works; data-backed API routes return 503 until configured).'
+      '[db] POSTGRES_URL not set â€” persistence disabled (static/API serving still works; data-backed API routes return 503 until configured).'
     );
     return;
   }
@@ -232,6 +235,7 @@ async function initDb() {
     created_at timestamptz DEFAULT now(),
     name text, role text, company text, location text,
     rating int DEFAULT 5, quote text,
+    image text,
     featured boolean DEFAULT false, status text DEFAULT 'published'
   );`);
   await q(`CREATE TABLE IF NOT EXISTS projects (
@@ -241,6 +245,18 @@ async function initDb() {
     description text, outcomes jsonb DEFAULT '[]'::jsonb,
     year text, featured boolean DEFAULT false, status text DEFAULT 'published'
   );`);
+  // image column migration for databases bootstrapped before images existed
+  await q('ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS image text');
+  await q('ALTER TABLE projects ADD COLUMN IF NOT EXISTS image text');
+  // uploaded image bytes (served back via GET /api/images/:id) â€” the Vercel
+  // filesystem is read-only, so binaries live in Postgres
+  await q(`CREATE TABLE IF NOT EXISTS images (
+    id text PRIMARY KEY,
+    mime text NOT NULL,
+    bytes bytea NOT NULL,
+    size int NOT NULL,
+    created_at timestamptz DEFAULT now()
+  );`);
   await q(`CREATE TABLE IF NOT EXISTS settings (
     key text PRIMARY KEY,
     value jsonb
@@ -248,7 +264,7 @@ async function initDb() {
   console.log('[db] tables ensured');
 }
 
-// ── blogs ──────────────────────────────────────────────────────────────────
+// â”€â”€ blogs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function getBlogs() {
   const { rows } = await needPool().query('SELECT * FROM blogs ORDER BY created_at DESC');
   return rows.map(mapBlog);
@@ -304,7 +320,7 @@ async function setBlogStatus(id, status) {
   return rows[0] ? mapBlog(rows[0]) : null;
 }
 
-// ── messages ───────────────────────────────────────────────────────────────
+// â”€â”€ messages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function getMessages() {
   const { rows } = await needPool().query('SELECT * FROM messages ORDER BY created_at DESC');
   return rows.map(mapMessage);
@@ -336,7 +352,7 @@ async function saveMessage(m) {
   return mapMessage(rows[0]);
 }
 
-// ── subscribers ──────────────────────────────────────────────────────────────
+// â”€â”€ subscribers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function getSubscribers() {
   const { rows } = await needPool().query('SELECT * FROM subscribers ORDER BY subscribed_at DESC');
   return rows.map(mapSubscriber);
@@ -353,7 +369,7 @@ async function deleteSubscriber(email) {
   await needPool().query('DELETE FROM subscribers WHERE email = $1', [email]);
 }
 
-// ── testimonials ───────────────────────────────────────────────────────────
+// â”€â”€ testimonials â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function getTestimonials() {
   const { rows } = await needPool().query('SELECT * FROM testimonials ORDER BY created_at DESC');
   return rows.map(mapTestimonial);
@@ -365,12 +381,12 @@ async function getTestimonial(id) {
 async function createTestimonial(t) {
   const { rows } = await needPool().query(
     `INSERT INTO testimonials
-      (id, created_at, name, role, company, location, rating, quote, featured, status)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+      (id, created_at, name, role, company, location, rating, quote, image, featured, status)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
     [
       t.id, t.createdAt || new Date().toISOString(), t.name, t.role || '',
       t.company || '', t.location || '', t.rating || 5, t.quote,
-      !!t.featured, t.status || 'published',
+      t.image || '', !!t.featured, t.status || 'published',
     ]
   );
   return mapTestimonial(rows[0]);
@@ -379,11 +395,11 @@ async function updateTestimonial(id, t) {
   const { rows } = await needPool().query(
     `UPDATE testimonials
         SET name=$1, role=$2, company=$3, location=$4, rating=$5,
-            quote=$6, featured=$7, status=$8
-      WHERE id=$9 RETURNING *`,
+            quote=$6, image=$7, featured=$8, status=$9
+      WHERE id=$10 RETURNING *`,
     [
       t.name, t.role || '', t.company || '', t.location || '',
-      t.rating || 5, t.quote, !!t.featured, t.status || 'published', id,
+      t.rating || 5, t.quote, t.image || '', !!t.featured, t.status || 'published', id,
     ]
   );
   return rows[0] ? mapTestimonial(rows[0]) : null;
@@ -399,7 +415,7 @@ async function setTestimonialStatus(id, status) {
   return rows[0] ? mapTestimonial(rows[0]) : null;
 }
 
-// ── projects ───────────────────────────────────────────────────────────────
+// â”€â”€ projects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function getProjects() {
   const { rows } = await needPool().query('SELECT * FROM projects ORDER BY created_at DESC');
   return rows.map(mapProject);
@@ -411,11 +427,12 @@ async function getProject(id) {
 async function createProject(p) {
   const { rows } = await needPool().query(
     `INSERT INTO projects
-      (id, created_at, title, category, client, location, description, outcomes, year, featured, status)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      (id, created_at, title, category, client, location, description, image, outcomes, year, featured, status)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
     [
       p.id, p.createdAt || new Date().toISOString(), p.title, p.category || '',
       p.client || '', p.location || '', p.description || '',
+      p.image || '',
       JSON.stringify(Array.isArray(p.outcomes) ? p.outcomes : []),
       p.year || '', !!p.featured, p.status || 'published',
     ]
@@ -426,11 +443,12 @@ async function updateProject(id, p) {
   const { rows } = await needPool().query(
     `UPDATE projects
         SET title=$1, category=$2, client=$3, location=$4, description=$5,
-            outcomes=$6, year=$7, featured=$8, status=$9
-      WHERE id=$10 RETURNING *`,
+            image=$6, outcomes=$7, year=$8, featured=$9, status=$10
+      WHERE id=$11 RETURNING *`,
     [
       p.title, p.category || '', p.client || '', p.location || '',
       p.description || '',
+      p.image || '',
       JSON.stringify(Array.isArray(p.outcomes) ? p.outcomes : []),
       p.year || '', !!p.featured, p.status || 'published', id,
     ]
@@ -448,7 +466,40 @@ async function setProjectStatus(id, status) {
   return rows[0] ? mapProject(rows[0]) : null;
 }
 
-// ── settings ───────────────────────────────────────────────────────────────
+// â”€â”€ settings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ uploaded images (bytes in Postgres; served via GET /api/images/:id) â”€â”€â”€â”€â”€â”€
+const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+const IMAGE_MAX_BYTES = 4 * 1024 * 1024; // Vercel request body cap is ~4.5 MB
+
+async function saveImage(buffer, mime) {
+  if (!Buffer.isBuffer(buffer) || buffer.length === 0) {
+    const e = new Error('Empty upload.'); e.badRequest = true; throw e;
+  }
+  if (!IMAGE_MIMES.includes(mime)) {
+    const e = new Error('Unsupported image type. Use JPEG, PNG, WebP, GIF or AVIF.'); e.badRequest = true; throw e;
+  }
+  if (buffer.length > IMAGE_MAX_BYTES) {
+    const e = new Error('Image too large (max 4 MB).'); e.badRequest = true; throw e;
+  }
+  const id = 'img-' + Date.now().toString(36) + crypto.randomBytes(6).toString('hex');
+  await needPool().query(
+    'INSERT INTO images (id, mime, bytes, size) VALUES ($1,$2,$3,$4)',
+    [id, mime, buffer, buffer.length]
+  );
+  return { id, url: `/api/images/${id}`, mime, size: buffer.length };
+}
+
+async function getImage(id) {
+  const { rows } = await needPool().query('SELECT * FROM images WHERE id = $1', [id]);
+  if (!rows[0]) return null;
+  return {
+    id: rows[0].id,
+    mime: rows[0].mime,
+    size: Number(rows[0].size),
+    bytes: Buffer.isBuffer(rows[0].bytes) ? rows[0].bytes : Buffer.from(rows[0].bytes),
+  };
+}
+
 async function getSettings() {
   const { rows } = await needPool().query('SELECT * FROM settings');
   return rows.map(mapSetting);
@@ -480,7 +531,7 @@ async function setSetting(key, value) {
   return mapSetting(rows[0]);
 }
 
-// ── admin ───────────────────────────────────────────────────────────────────
+// â”€â”€ admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function getAdmin() {
   const { rows } = await needPool().query('SELECT * FROM admin WHERE username = $1', ['admin']);
   if (!rows[0]) return { username: 'admin', passwordHash: '' };
@@ -494,14 +545,14 @@ async function updateAdminPassword(hash) {
   );
 }
 
-// ── first-boot seeding (idempotent) ────────────────────────────────────────
+// â”€â”€ first-boot seeding (idempotent) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Seeds from backend/data/*.json only where rows are missing. Runs
 // automatically on the first query after a cold start (see ensureReady) and
 // from `node migrate.js`. Existing rows/settings are always kept.
 async function seedAll(log = () => {}) {
   const bcrypt = require('bcryptjs');
 
-  // admin password — hash the ADMIN_PASSWORD env var into the DB so DB-backed
+  // admin password â€” hash the ADMIN_PASSWORD env var into the DB so DB-backed
   // auth takes over from the env fallback immediately.
   const admin = await getAdmin();
   if (!admin.passwordHash) {
@@ -608,6 +659,7 @@ module.exports = {
   getSubscribers, addSubscriber, deleteSubscriber,
   getTestimonials, getTestimonial, createTestimonial, updateTestimonial, deleteTestimonial, setTestimonialStatus,
   getProjects, getProject, createProject, updateProject, deleteProject, setProjectStatus,
+  saveImage, getImage,
   getSettings, getSetting, setSetting, upsertSettings,
   getAdmin, updateAdminPassword,
 };

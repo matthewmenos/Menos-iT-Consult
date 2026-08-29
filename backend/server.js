@@ -14,6 +14,7 @@ const blogsRoute      = require('./routes/blogs');
 const messagesRoute   = require('./routes/messages');
 const contentRoute    = require('./routes/content');
 const manageRoute     = require('./routes/manage');
+const imagesRoute     = require('./routes/images');
 
 const app  = express();
 app.set('trust proxy', 1); // behind Nginx/Vercel - respect X-Forwarded-* headers
@@ -44,8 +45,10 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   credentials: true,
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// JSON body — raised to 2 MB so base64-encoded image payloads (from the admin
+// content editor's image upload) are accepted by the API layer.
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 // -- Stateless auth -----------------------------------------------------------
 // httpOnly *signed* cookie carries the admin flag; nothing expires between
@@ -102,6 +105,7 @@ app.use('/api/blogs',      requireDb, blogsRoute);
 app.use('/api/messages',   requireDb, messagesRoute);
 app.use('/api/content',    requireDb, contentRoute);   // public read-only site content
 app.use('/api/manage',     manageRoute);              // admin CRUD — requireAuth inside router runs BEFORE any DB check
+app.use('/api/images',     requireDb, imagesRoute);    // uploaded image bytes (from Postgres)
 app.get('/api/health', async (_req, res) => {
   let dbState = 'not_configured';
   if (db.pool) {

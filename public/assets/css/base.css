@@ -89,6 +89,7 @@ ul { list-style: none; }
   box-shadow: 0 4px 14px rgba(26,86,219,.35);
 }
 .btn-primary:hover { background: var(--blue-d); box-shadow: 0 6px 20px rgba(26,86,219,.45); transform: translateY(-1px); }
+.btn-sm { padding: 9px 20px; font-size: .83rem; }
 .btn-ghost  { background: transparent; color: var(--dark); border: 1.5px solid var(--border); }
 .btn-ghost:hover { border-color: var(--blue-l); color: var(--blue); }
 .btn-nav {
@@ -345,6 +346,8 @@ ul { list-style: none; }
   color: #fff; font-size: .85rem; font-weight: 700;
   display: grid; place-items: center; flex-shrink: 0;
 }
+/* admin-uploaded profile photo */
+img.tcard-av-img { object-fit: cover; border: 2px solid var(--blue-mid); }
 .tcard-author strong  { font-size: .9rem; font-weight: 700; color: var(--dark); }
 .tcard-author span    { font-size: .78rem; color: var(--muted); }
 
@@ -472,10 +475,14 @@ ul { list-style: none; }
 }
 .cookie-banner p { font-size: .85rem; color: #cbd5e1; line-height: 1.5; }
 .cookie-banner a { color: var(--blue-l); text-decoration: underline; }
-.cookie-btns     { display: flex; gap: 10px; flex-shrink: 0; }
-.cookie-btns .btn { padding: 9px 20px; font-size: .83rem; }
-.cookie-btns .btn-ghost { border-color: rgba(255,255,255,.2); color: #94a3b8; }
-.cookie-btns .btn-ghost:hover { border-color: #fff; color: #fff; }
+.cookie-btns,
+.cookie-actions   { display: flex; gap: 10px; flex-shrink: 0; }
+.cookie-btns .btn,
+.cookie-actions .btn { padding: 9px 20px; font-size: .83rem; }
+.cookie-btns .btn-ghost,
+.cookie-actions .btn-ghost { border-color: rgba(255,255,255,.2); color: #94a3b8; }
+.cookie-btns .btn-ghost:hover,
+.cookie-actions .btn-ghost:hover { border-color: #fff; color: #fff; }
 
 /* ── Testimonial marquee strip ── */
 .marquee-section { background: var(--blue-bg); border-top: 1px solid var(--blue-mid); border-bottom: 1px solid var(--blue-mid); padding: 18px 0; overflow: hidden; }
