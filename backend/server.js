@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
 const express       = require('express');
 const cors          = require('cors');
@@ -57,6 +57,21 @@ app.use(cookieParser(process.env.SESSION_SECRET));
 const isAdminAuthed = (req) =>
   !!(req.signedCookies && req.signedCookies.admin_auth === 'true');
 
+// Data-backed API routes need Postgres. Return an actionable 503 (instead of a
+// generic 500 from deep inside a route) when POSTGRES_URL is missing — e.g. on
+// a fresh Vercel deploy before the env var is added. Once it IS set, tables and
+// seed data are created automatically on the first request (see db.js), so this
+// middleware then becomes a no-op.
+const requireDb = (_req, res, next) => {
+  if (!db.pool) {
+    return res.status(503).json({
+      error:
+        'Database not configured. Add POSTGRES_URL (Vercel → Settings → Environment Variables) and redeploy — tables and seed data are created automatically on first request.',
+    });
+  }
+  next();
+};
+
 // -- Admin panel ---------------------------------------------------------------
 // /admin/login    -> standalone login page (always served)
 // /admin          -> dashboard when signed in; 302 to /admin/login when not
@@ -81,13 +96,24 @@ app.get('/admin/{*path}', (req, res) => {
 
 // -- API routes ----------------------------------------------------------------
 app.use('/api/auth',       authRoute);
-app.use('/api/contact',    contactRoute);
-app.use('/api/newsletter', newsletterRoute);
-app.use('/api/blogs',      blogsRoute);
-app.use('/api/messages',   messagesRoute);
-app.use('/api/content',    contentRoute);   // public read-only site content
-app.use('/api/manage',     manageRoute);    // admin CRUD (auth required)
-app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+app.use('/api/contact',    requireDb, contactRoute);   // enquiries must persist; 503 (not silent loss) without a DB
+app.use('/api/newsletter', requireDb, newsletterRoute);
+app.use('/api/blogs',      requireDb, blogsRoute);
+app.use('/api/messages',   requireDb, messagesRoute);
+app.use('/api/content',    requireDb, contentRoute);   // public read-only site content
+app.use('/api/manage',     manageRoute);              // admin CRUD — requireAuth inside router runs BEFORE any DB check
+app.get('/api/health', async (_req, res) => {
+  let dbState = 'not_configured';
+  if (db.pool) {
+    try {
+      await db.pool.query('SELECT 1');
+      dbState = 'connected';
+    } catch {
+      dbState = 'unreachable';
+    }
+  }
+  res.json({ status: 'ok', db: dbState });
+});
 
 // -- Clean URL page routes: /about -> public/pages/about.html, etc. ------------
 const PAGE_ROUTES = [

@@ -103,7 +103,8 @@ PORT=3000
 # Cookie signing secret — required, change to a long random string
 SESSION_SECRET=a-long-random-string
 
-# Admin login password (run `node migrate.js` / `node setup.js` to hash it)
+# Admin login password — hashed into the `admin` table automatically on
+# first boot (also the fallback login while the DB is not configured)
 ADMIN_PASSWORD=your-secure-password
 
 # Runtime — `production` enables secure (HTTPS-only) cookies
@@ -114,15 +115,18 @@ NODE_ENV=development
 
 ### 3. Provision the database
 
+Nothing to do beyond setting `POSTGRES_URL` — the app **self-bootstraps**:
+on the first request it creates the tables (`CREATE TABLE IF NOT EXISTS`),
+seeds them from `data/*.json`, and hashes `ADMIN_PASSWORD` into the `admin`
+table (see `ensureReady`/`seedAll` in `db.js`). Existing rows are skipped,
+so this is safe to run repeatedly.
+
+Optionally seed ahead of time from a machine with direct DB access:
+
 ```bash
 cd backend
 node migrate.js
 ```
-
-Creates the tables (`CREATE TABLE IF NOT EXISTS`) and seeds them from
-`data/*.json`, then hashes `ADMIN_PASSWORD` from `.env` into the `admin` table.
-Re-running is safe (existing rows are skipped). To (re)set only the admin
-password later, run `node setup.js`.
 
 ### 4. Start the server
 
@@ -277,19 +281,17 @@ vercel          # links & deploys a preview
 vercel --prod   # production
 ```
 
-### 4. Seed the database
-Run the migration once (creates tables + imports `data/*.json` + sets the admin
-password). Either run it locally against the remote DB, or use `vercel run`:
+### 4. Database
+No migration step is required — the app creates and seeds the schema
+automatically on the first request after `POSTGRES_URL` is set. To seed
+ahead of time instead:
 
 ```bash
-# Option A — local, against the remote DATABASE_URL
+# Local machine, against the remote database
 cd backend
-set DATABASE_URL=postgresql://...
+set POSTGRES_URL=postgresql://...
 set ADMIN_PASSWORD=your-secure-password
 node migrate.js
-
-# Option B — one-off execution on Vercel
-vercel run backend/migrate.js
 ```
 
 > **Login at `https://your-site.vercel.app/admin`** with `admin` / the
@@ -319,8 +321,8 @@ vercel run backend/migrate.js
 2. Install Node.js 20+ on the VM
 3. Install PostgreSQL and create a database: `sudo apt install postgresql`
 4. Clone the repo and run `npm install` in `backend/`
-5. Set up `.env` with production values (including `DATABASE_URL`)
-6. Run `node migrate.js` to seed PostgreSQL + set the admin password
+5. Set up `.env` with production values (including `POSTGRES_URL`)
+6. Optional: `node migrate.js` to seed ahead of time (the app also self-bootstraps on first request)
 7. Install PM2: `npm install -g pm2`
 8. Start with PM2: `pm2 start backend/server.js --name menos-it`
 9. Install Nginx and proxy port 80 -> 3000

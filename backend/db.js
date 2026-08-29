@@ -29,9 +29,85 @@ const pool =
     : null;
 
 function needPool() {
-    if (!pool) throw new Error('POSTGRES_URL is not set');
-  return pool;
+  if (!pool) throw noDbError();
+  return lazyPool;
 }
+
+function noDbError() {
+  const err = new Error(
+    'Database not configured. Set POSTGRES_URL (Vercel → Settings → Environment Variables) and redeploy.'
+  );
+  err.noDb = true;
+  return err;
+}
+
+// ── data dir across deployment layouts (used by first-boot seeding) ────────
+// local/PM2: backend/db.js -> ./data;  Vercel: includeFiles copies
+// backend/data/** to <lambda>/backend/data, and the bundled handler's
+// __dirname is <lambda>/api (same rule server.js uses for public/admin).
+const fs   = require('fs');
+const path = require('path');
+const DATA_DIR = (() => {
+  const candidates = [
+    path.join(__dirname, 'data'),
+    path.join(__dirname, '../backend/data'),
+    path.join(__dirname, '../data'),
+    path.join(process.cwd(), 'backend', 'data'),
+  ];
+  for (const dir of candidates) {
+    try { if (fs.statSync(dir).isDirectory()) return dir; } catch (_) { /* next */ }
+  }
+  return candidates[0];
+})();
+
+function readSeedJson(file, fallback) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(DATA_DIR, file), 'utf8'));
+  } catch {
+    return fallback;
+  }
+}
+
+// ── one-time bootstrap: create tables + seed on the first query ────────────
+// Deploying with POSTGRES_URL set is enough — no manual `node migrate.js`
+// needed. Failures (e.g. transient network) reset the promise so the next
+// request retries.
+let readyPromise  = null;
+let bootstrapping = false;
+
+function ensureReady() {
+  if (!readyPromise) {
+    readyPromise = (async () => {
+      bootstrapping = true;
+      try {
+        await initDb();
+        await seedAll(console.log);
+      } finally {
+        bootstrapping = false;
+      }
+    })().catch(err => {
+      readyPromise = null; // allow the next request to retry
+      // A bootstrap failure means the database is configured but unusable
+      // (unreachable, bad credentials, permissions). Tag it so route error
+      // handlers answer 503 with the real cause instead of a generic 500.
+      if (!err.noDb) err.noDb = true;
+      throw err;
+    });
+  }
+  return readyPromise;
+}
+
+// Thin pool facade: every DAO call waits for the bootstrap before touching
+// SQL. During the bootstrap itself the guard is off, so the seeder's own DAO
+// calls (which go through needPool) don't deadlock on their own promise.
+const lazyPool = {
+  query: async (...args) => {
+    if (!bootstrapping) await ensureReady();
+    return pool.query(...args);
+  },
+  connect: (...args) => pool.connect(...args),
+  end:     (...args) => pool.end(...args),
+};
 
 function iso(v) {
   if (v == null) return null;
@@ -122,7 +198,7 @@ function mapSetting(r) {
 async function initDb() {
   if (!pool) {
     console.warn(
-      '[db] POSTGRES_URL not set — persistence disabled (static/API serving still works; DB routes will 400 until configured).'
+      '[db] POSTGRES_URL not set — persistence disabled (static/API serving still works; data-backed API routes return 503 until configured).'
     );
     return;
   }
@@ -418,9 +494,115 @@ async function updateAdminPassword(hash) {
   );
 }
 
+// ── first-boot seeding (idempotent) ────────────────────────────────────────
+// Seeds from backend/data/*.json only where rows are missing. Runs
+// automatically on the first query after a cold start (see ensureReady) and
+// from `node migrate.js`. Existing rows/settings are always kept.
+async function seedAll(log = () => {}) {
+  const bcrypt = require('bcryptjs');
+
+  // admin password — hash the ADMIN_PASSWORD env var into the DB so DB-backed
+  // auth takes over from the env fallback immediately.
+  const admin = await getAdmin();
+  if (!admin.passwordHash) {
+    const pw = process.env.ADMIN_PASSWORD || 'admin123';
+    await updateAdminPassword(bcrypt.hashSync(pw, 12));
+    log('[seed] admin password set from ADMIN_PASSWORD (username: admin)');
+  }
+
+  // blogs
+  const blogs = readSeedJson('blogs.json', []);
+  let n = 0;
+  for (const b of blogs) {
+    if (!b.id || (await getBlog(b.id))) continue;
+    await createBlog(b); n++;
+  }
+  if (n) log(`[seed] blogs: ${n}/${blogs.length} added`);
+
+  // messages
+  const messages = readSeedJson('messages.json', []);
+  n = 0;
+  for (const m of messages) {
+    if (!m.id || (await getMessage(m.id))) continue;
+    await saveMessage(m); n++;
+  }
+  if (n) log(`[seed] messages: ${n}/${messages.length} added`);
+
+  // subscribers
+  const subs = readSeedJson('subscribers.json', []);
+  n = 0;
+  for (const s of subs) {
+    if (!s.email) continue;
+    const existing = await getSubscribers();
+    if (existing.find(x => x.email.toLowerCase() === s.email.toLowerCase())) continue;
+    await addSubscriber(s.email); n++;
+  }
+  if (n) log(`[seed] subscribers: ${n}/${subs.length} added`);
+
+  // testimonials
+  const testimonials = readSeedJson('testimonials.json', []);
+  n = 0;
+  for (const t of testimonials) {
+    if (!t.id || !t.quote || (await getTestimonial(t.id))) continue;
+    await createTestimonial({
+      id: t.id,
+      name: t.name || '',
+      role: t.role || '',
+      company: t.company || '',
+      location: t.location || '',
+      rating: t.rating || 5,
+      quote: t.quote,
+      featured: !!t.featured,
+      status: t.status || 'published',
+      createdAt: t.createdAt,
+    });
+    n++;
+  }
+  if (n) log(`[seed] testimonials: ${n}/${testimonials.length} added`);
+
+  // projects
+  const projects = readSeedJson('projects.json', []);
+  n = 0;
+  for (const p of projects) {
+    if (!p.id || !p.title || (await getProject(p.id))) continue;
+    await createProject({
+      id: p.id,
+      title: p.title,
+      category: p.category || '',
+      client: p.client || '',
+      location: p.location || '',
+      description: p.description || '',
+      outcomes: Array.isArray(p.outcomes) ? p.outcomes : [],
+      year: p.year || '',
+      featured: !!p.featured,
+      status: p.status || 'published',
+      createdAt: p.createdAt,
+    });
+    n++;
+  }
+  if (n) log(`[seed] projects: ${n}/${projects.length} added`);
+
+  // settings defaults (only if not already set)
+  if (!(await getSetting('stats'))) {
+    await setSetting('stats', { clients: 150, years: 12, satisfaction: 98, projects: 150 });
+    log('[seed] default stats seeded');
+  }
+  if (!(await getSetting('contact'))) {
+    await setSetting('contact', {
+      email: 'minnahmat50@gmail.com',
+      phone: '+233 549 128 384',
+      whatsapp: '233549128384',
+      location: 'Agona, Western Region, Ghana',
+    });
+    log('[seed] default contact info seeded');
+  }
+}
+
 module.exports = {
   pool,
   initDb,
+  seedAll,
+  ensureReady,
   getBlogs, getBlog, getBlogBySlug, createBlog, updateBlog, deleteBlog, setBlogStatus,
   getMessages, getMessage, deleteMessage, markMessageRead, saveMessage,
   getSubscribers, addSubscriber, deleteSubscriber,

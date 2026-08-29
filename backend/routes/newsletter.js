@@ -57,6 +57,9 @@ router.post('/', async (req, res) => {
     res.json({ success: true, message: "You're subscribed! Practical IT tips coming your way." });
   } catch (err) {
     console.error('Newsletter subscribe error:', err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });
+    }
     res.status(500).json({ error: 'Could not subscribe at this time.' });
   }
 });
@@ -68,6 +71,8 @@ router.get('/subscribers', requireAuth, async (req, res) => {
     res.json({ subscribers, count: subscribers.length });
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -83,6 +88,8 @@ router.delete('/subscribers/:email', requireAuth, async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });

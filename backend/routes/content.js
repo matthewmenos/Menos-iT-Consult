@@ -27,6 +27,7 @@ router.get('/testimonials', async (req, res) => {
     res.json(published);
   } catch (err) {
     console.error('[content] testimonials error:', err.message);
+    if (err.noDb) return res.status(503).json({ error: err.message });
     res.status(500).json({ error: 'Failed to load testimonials.' });
   }
 });
@@ -40,6 +41,7 @@ router.get('/projects', async (req, res) => {
     res.json(published);
   } catch (err) {
     console.error('[content] projects error:', err.message);
+    if (err.noDb) return res.status(503).json({ error: err.message });
     res.status(500).json({ error: 'Failed to load projects.' });
   }
 });
@@ -52,6 +54,7 @@ router.get('/settings', async (req, res) => {
     res.json({ ...DEFAULT_SETTINGS, ...stored });
   } catch (err) {
     console.error('[content] settings error:', err.message);
+    if (err.noDb) return res.status(503).json({ error: err.message });
     res.status(500).json({ error: 'Failed to load settings.' });
   }
 });

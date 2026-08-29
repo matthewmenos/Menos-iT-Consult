@@ -38,7 +38,7 @@ function cleanStatus(v, fallback) {
 // ── testimonials ───────────────────────────────────────────────────────────
 router.get('/testimonials', async (req, res) => {
   try { res.json(await db.getTestimonials()); }
-  catch (err) { res.status(500).json({ error: 'Failed to load testimonials.' }); }
+  catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to load testimonials.' }); }
 });
 
 router.post('/testimonials', async (req, res) => {
@@ -60,7 +60,7 @@ router.post('/testimonials', async (req, res) => {
       createdAt: new Date().toISOString(),
     });
     res.status(201).json(t);
-  } catch (err) { res.status(500).json({ error: 'Failed to create testimonial.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to create testimonial.' }); }
 });
 
 router.get('/testimonials/:id', async (req, res) => {
@@ -68,7 +68,7 @@ router.get('/testimonials/:id', async (req, res) => {
     const t = await db.getTestimonial(req.params.id);
     if (!t) return res.status(404).json({ error: 'Not found.' });
     res.json(t);
-  } catch (err) { res.status(500).json({ error: 'Failed to load testimonial.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to load testimonial.' }); }
 });
 
 router.put('/testimonials/:id', async (req, res) => {
@@ -87,7 +87,7 @@ router.put('/testimonials/:id', async (req, res) => {
       status: cleanStatus(b.status, existing.status),
     });
     res.json(t);
-  } catch (err) { res.status(500).json({ error: 'Failed to update testimonial.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to update testimonial.' }); }
 });
 
 router.patch('/testimonials/:id/status', async (req, res) => {
@@ -97,20 +97,20 @@ router.patch('/testimonials/:id/status', async (req, res) => {
     const t = await db.setTestimonialStatus(req.params.id, status);
     if (!t) return res.status(404).json({ error: 'Not found.' });
     res.json(t);
-  } catch (err) { res.status(500).json({ error: 'Failed to update status.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to update status.' }); }
 });
 
 router.delete('/testimonials/:id', async (req, res) => {
   try {
     await db.deleteTestimonial(req.params.id);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: 'Failed to delete testimonial.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to delete testimonial.' }); }
 });
 
 // ── projects ───────────────────────────────────────────────────────────────
 router.get('/projects', async (req, res) => {
   try { res.json(await db.getProjects()); }
-  catch (err) { res.status(500).json({ error: 'Failed to load projects.' }); }
+  catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to load projects.' }); }
 });
 
 router.post('/projects', async (req, res) => {
@@ -131,7 +131,7 @@ router.post('/projects', async (req, res) => {
       createdAt: new Date().toISOString(),
     });
     res.status(201).json(p);
-  } catch (err) { res.status(500).json({ error: 'Failed to create project.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to create project.' }); }
 });
 
 router.get('/projects/:id', async (req, res) => {
@@ -139,7 +139,7 @@ router.get('/projects/:id', async (req, res) => {
     const p = await db.getProject(req.params.id);
     if (!p) return res.status(404).json({ error: 'Not found.' });
     res.json(p);
-  } catch (err) { res.status(500).json({ error: 'Failed to load project.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to load project.' }); }
 });
 
 router.put('/projects/:id', async (req, res) => {
@@ -159,7 +159,7 @@ router.put('/projects/:id', async (req, res) => {
       status: cleanStatus(b.status, existing.status),
     });
     res.json(p);
-  } catch (err) { res.status(500).json({ error: 'Failed to update project.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to update project.' }); }
 });
 
 router.patch('/projects/:id/status', async (req, res) => {
@@ -169,14 +169,14 @@ router.patch('/projects/:id/status', async (req, res) => {
     const p = await db.setProjectStatus(req.params.id, status);
     if (!p) return res.status(404).json({ error: 'Not found.' });
     res.json(p);
-  } catch (err) { res.status(500).json({ error: 'Failed to update status.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to update status.' }); }
 });
 
 router.delete('/projects/:id', async (req, res) => {
   try {
     await db.deleteProject(req.params.id);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: 'Failed to delete project.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to delete project.' }); }
 });
 
 // ── settings (stats + contact info shown across the site) ──────────────────
@@ -186,7 +186,7 @@ router.get('/settings', async (req, res) => {
     const out = {};
     for (const r of rows) out[r.key] = r.value;
     res.json(out);
-  } catch (err) { res.status(500).json({ error: 'Failed to load settings.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to load settings.' }); }
 });
 
 router.put('/settings', async (req, res) => {
@@ -220,7 +220,7 @@ router.put('/settings', async (req, res) => {
     const out = {};
     for (const r of rows) out[r.key] = r.value;
     res.json(out);
-  } catch (err) { res.status(500).json({ error: 'Failed to save settings.' }); }
+  } catch (err) { if (err.noDb) return res.status(503).json({ error: err.message }); console.error(err); res.status(500).json({ error: 'Failed to save settings.' }); }
 });
 
 module.exports = router;

@@ -18,6 +18,8 @@ router.get('/', async (req, res) => {
     res.json(blogs);
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -33,6 +35,8 @@ router.get('/slug/:slug', async (req, res) => {
     res.json(blog);
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -45,6 +49,8 @@ router.get('/:id', async (req, res) => {
     res.json(blog);
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -69,6 +75,8 @@ router.post('/', requireAuth, async (req, res) => {
     res.status(201).json(await db.createBlog(newBlog));
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -92,6 +100,8 @@ router.put('/:id', requireAuth, async (req, res) => {
     res.json(await db.updateBlog(req.params.id, updated));
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -105,6 +115,8 @@ router.delete('/:id', requireAuth, async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -117,6 +129,8 @@ router.patch('/:id/publish', requireAuth, async (req, res) => {
     res.json(b);
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -129,6 +143,8 @@ router.patch('/:id/unpublish', requireAuth, async (req, res) => {
     res.json(b);
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });

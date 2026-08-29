@@ -7,7 +7,7 @@
  *
  * Usage:  ADMIN_PASSWORD=newpass NODE_ENV=production node setup.js
  */
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const bcrypt = require('bcryptjs');
 const db     = require('./db');
 

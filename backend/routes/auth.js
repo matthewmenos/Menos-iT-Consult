@@ -92,8 +92,8 @@ router.put('/password', async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error('Password update error:', err);
-    if (/POSTGRES_URL is not set/i.test(String(err.message))) {
-      return res.status(503).json({ error: 'Password change requires a configured database (POSTGRES_URL).' });
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });
     }
     res.status(500).json({ error: 'Password update failed.' });
   }

@@ -9,6 +9,8 @@ router.get('/', requireAuth, async (req, res) => {
     res.json(await db.getMessages());
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -22,6 +24,8 @@ router.delete('/:id', requireAuth, async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
@@ -34,6 +38,8 @@ router.patch('/:id/read', requireAuth, async (req, res) => {
     res.json(m);
   } catch (err) {
     console.error(err);
+    if (err.noDb) {
+      return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
   }
 });
