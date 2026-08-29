@@ -3,10 +3,68 @@
    Map box · FAQ accordion
    ───────────────────────────────────────────── */
 
-/* ── map embed ── */
-.map-box {
-  border-radius: 12px; overflow: hidden;
-  border: 1px solid var(--border); margin-top: 8px;
+/* ── map & directions section ── */
+.find-us-head { margin-bottom: clamp(36px, 5vw, 52px); }
+.find-us-head .section-label { margin: 0 auto 14px; }
+.find-us-head .section-title { margin-bottom: 12px; }
+.find-us-head .section-sub  { max-width: 560px; margin: 0 auto; }
+
+.center { text-align: center; }
+
+.map-frame {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 55px rgba(15, 23, 42, .12);
+  background: var(--blue-bg);
+}
+.map-frame iframe {
+  display: block;
+  width: 100%;
+  height: clamp(320px, 42vw, 460px);
+  border: 0;
+}
+
+.map-card {
+  position: absolute;
+  left: 22px;
+  top: 22px;
+  z-index: 2;
+  width: min(340px, calc(100% - 44px));
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, .16);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.map-card-top { display: flex; gap: 12px; align-items: flex-start; }
+.map-card-pin {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--blue-bg);
+  color: var(--blue);
+  display: grid;
+  place-items: center;
+}
+.map-card strong {
+  display: block;
+  font-size: .92rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 3px;
+}
+.map-card p { font-size: .85rem; color: var(--muted); line-height: 1.55; }
+.map-card .map-card-hours { margin-top: 2px; font-size: .8rem; }
+.map-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* ── FAQ accordion ── */
@@ -28,3 +86,14 @@
 }
 .faq-a.open { max-height: 200px; }
 .faq-a p    { font-size: .9rem; color: var(--muted); line-height: 1.7; padding-bottom: 20px; }
+
+/* ── map section: responsive ── */
+@media (max-width: 640px) {
+  .map-card {
+    position: static;
+    width: 100%;
+    margin-top: 14px;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, .1);
+  }
+  .map-frame { border-radius: 14px; }
+}

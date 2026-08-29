@@ -1150,9 +1150,42 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ─────────────────────────────────────────────
+// Password reveal toggles
+// ─────────────────────────────────────────────
+function initPasswordToggles() {
+  // Inline login screen on the dashboard
+  const inlinePw = document.getElementById('login-password');
+  const inlineToggle = document.getElementById('toggle-pw-inline');
+  if (inlinePw && inlineToggle) {
+    inlineToggle.addEventListener('click', () => {
+      const type = inlinePw.getAttribute('type') === 'password' ? 'text' : 'password';
+      inlinePw.setAttribute('type', type);
+      inlineToggle.setAttribute('aria-label', type === 'password' ? 'Show password' : 'Hide password');
+    });
+  }
+  // Change-password form
+  [
+    { input: 'current-password', btn: 'toggle-current-pw' },
+    { input: 'new-password',     btn: 'toggle-new-pw' },
+    { input: 'confirm-password', btn: 'toggle-confirm-pw' },
+  ].forEach(({ input, btn }) => {
+    const pw = document.getElementById(input);
+    const tg = document.getElementById(btn);
+    if (pw && tg) {
+      tg.addEventListener('click', () => {
+        const type = pw.getAttribute('type') === 'password' ? 'text' : 'password';
+        pw.setAttribute('type', type);
+        tg.setAttribute('aria-label', type === 'password' ? 'Show password' : 'Hide password');
+      });
+    }
+  });
+}
+
+// ─────────────────────────────────────────────
 // Initialise
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+  initPasswordToggles();
   const loggedIn = await checkAuth();
   if (loggedIn) {
     showDashboard();

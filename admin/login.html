@@ -42,10 +42,13 @@
           <input type="text" id="username" name="username" placeholder="admin"
                  autocomplete="username" required autofocus>
         </div>
-        <div class="form-group">
+                <div class="form-group form-group--pw">
           <label for="password">Password</label>
           <input type="password" id="password" name="password" placeholder="••••••••"
                  autocomplete="current-password" required>
+          <button type="button" class="pw-toggle" id="toggle-pw" aria-label="Show password">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
         </div>
         <button type="submit" class="btn btn-primary btn-full" id="login-btn">Sign In</button>
         <p id="login-error" class="error-msg" style="display:none" role="alert"></p>
@@ -61,7 +64,17 @@
       var errEl  = document.getElementById('login-error');
       var btn    = document.getElementById('login-btn');
       var userEl = document.getElementById('username');
-      var passEl = document.getElementById('password');
+            var passEl = document.getElementById('password');
+      var passToggle = document.getElementById('toggle-pw');
+
+      // Password reveal
+      if (passToggle && passEl) {
+        passToggle.addEventListener('click', function () {
+          var t = passEl.getAttribute('type') === 'password' ? 'text' : 'password';
+          passEl.setAttribute('type', t);
+          passToggle.setAttribute('aria-label', t === 'password' ? 'Show password' : 'Hide password');
+        });
+      }
 
       function showError(msg) {
         errEl.textContent = msg;

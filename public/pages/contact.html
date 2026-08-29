@@ -31,7 +31,7 @@
         <a href="/blog"         data-page="blog">Blog</a>
         <a href="/contact"      data-page="contact">Contact</a>
       </nav>
-      <a href="/contact" class="btn btn-nav">Get Started</a>
+      <a href="tel:+233549128384" class="btn btn-nav">Call Now</a>
       <button class="burger" id="burger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     </div>
   </header>
@@ -44,7 +44,7 @@
     <a href="/testimonials">Testimonials</a>
     <a href="/blog">Blog</a>
     <a href="/contact">Contact</a>
-    <a href="/contact" class="btn btn-primary">Get Started</a>
+    <a href="tel:+233549128384" class="btn btn-primary">Call Now</a>
   </div>
 
   <main class="page-transition">
@@ -78,15 +78,6 @@
             <div class="ci-item">
               <div class="ci-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
               <div><strong>Business Hours</strong><p>Monday – Friday: 9am – 5pm<br/>Saturday – Sunday: Closed</p></div>
-            </div>
-
-            <!-- Map embed placeholder -->
-            <div class="map-box">
-              <iframe
-                title="Menos iT Consult location"
-                src="https://www.google.com/maps/place/Menos+Empire/@4.8849184,-1.9612574,16z/data=!4m6!3m5!1s0xfe79b5c60a425a7:0xf6fd3f67a59717a7!8m2!3d4.8849265!4d-1.9586283!16s%2Fg%2F11z7kr_xlm?entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D"
-                width="100%" height="220" style="border:0;border-radius:10px;" allowfullscreen="" loading="lazy">
-              </iframe>
             </div>
 
             <div class="newsletter">
@@ -155,6 +146,42 @@
               Message sent! We'll get back to you within one business day.
             </div>
           </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAP & DIRECTIONS -->
+    <section class="section find-us">
+      <div class="container">
+        <div class="find-us-head center reveal">
+          <div class="section-label">Find Us</div>
+          <h2 class="section-title">Based in <span class="highlight">Agona</span>, Western Region</h2>
+          <p class="section-sub">Drop by during business hours or reach out and we'll come to you.</p>
+        </div>
+
+        <div class="map-frame reveal">
+          <iframe
+            title="Menos iT Consult location map"
+            src="https://maps.google.com/maps?q=4.8849265,-1.9586283&z=16&hl=en&output=embed"
+            width="100%" height="460" style="border:0" allowfullscreen loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+          <div class="map-card">
+            <div class="map-card-top">
+              <span class="map-card-pin">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <div>
+                <strong>Menos iT Consult</strong>
+                <p data-contact="location">Agona, Western Region, Ghana</p>
+                <p class="map-card-hours">Mon – Fri · 9am – 5pm</p>
+              </div>
+            </div>
+            <div class="map-card-actions">
+              <a class="btn btn-primary btn-sm" href="https://www.google.com/maps/dir/?api=1&destination=4.8849265,-1.9586283" target="_blank" rel="noopener">Get Directions</a>
+              <a class="btn btn-ghost btn-sm" href="https://www.google.com/maps/search/?api=1&query=4.8849265,-1.9586283" target="_blank" rel="noopener">Open in Maps</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
