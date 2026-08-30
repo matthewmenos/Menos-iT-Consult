@@ -486,8 +486,10 @@ img.tcard-av-img { object-fit: cover; border: 2px solid var(--blue-mid); }
 
 /* ── Testimonial marquee strip ── */
 .marquee-section { background: var(--blue-bg); border-top: 1px solid var(--blue-mid); border-bottom: 1px solid var(--blue-mid); padding: 18px 0; overflow: hidden; }
-.marquee-track   { display: flex; gap: 40px; width: max-content; animation: marqueeScroll 32s linear infinite; }
+.marquee-track   { display: flex; gap: 40px; width: max-content; animation: marqueeScroll 18s linear infinite; }
 .marquee-track:hover { animation-play-state: paused; }
+/* "Trusted Partners" title centred above the scrolling strip */
+.marquee-section .section-label { display: block; width: max-content; margin: 0 auto 14px; }
 .marquee-item {
   display: flex; align-items: center; gap: 12px; flex-shrink: 0;
   background: #fff; border: 1px solid var(--border); border-radius: 100px;
