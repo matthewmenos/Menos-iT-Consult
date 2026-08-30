@@ -1,73 +1,7 @@
 [
   {
-    "id": "tst-kab",
-    "name": "Baffour Kofi",
-    "role": "Owner",
-    "company": "KAB Enterprises",
-    "location": "",
-    "rating": 5,
-    "quote": "Menos iT completely transformed our network infrastructure. We went from constant downtime to zero interruptions in six months. The team was professional, communicative, and delivered exactly what they promised.",
-    "featured": true,
-    "status": "published"
-  },
-  {
-    "id": "tst-sarpong",
-    "name": "Abena Sarpong",
-    "role": "Director",
-    "company": "Sarpong & Co.",
-    "location": "",
-    "rating": 5,
-    "quote": "Their cybersecurity audit uncovered vulnerabilities we had no idea about. The team explained everything clearly and in plain language. Fixed issues quickly and gave us a roadmap to stay protected going forward.",
-    "featured": true,
-    "status": "published"
-  },
-  {
-    "id": "tst-mensah",
-    "name": "Kweku Mensah",
-    "role": "MD",
-    "company": "Mensah Logistics",
-    "location": "",
-    "rating": 5,
-    "quote": "Moving our data to the cloud was something we'd been putting off for years. Menos iT made it completely painless and actually saved us money on monthly IT costs. Couldn't recommend them highly enough.",
-    "featured": true,
-    "status": "published"
-  },
-  {
-    "id": "tst-asante",
-    "name": "Emmanuel Asante",
-    "role": "Operations Manager",
-    "company": "Asante Trading",
-    "location": "",
-    "rating": 5,
-    "quote": "We had a network failure on a Friday evening. Menos iT had someone on the phone within 20 minutes and we were back up by Saturday morning. That kind of responsiveness is rare and we really value it.",
-    "featured": false,
-    "status": "published"
-  },
-  {
-    "id": "tst-boateng",
-    "name": "Yaa Boateng",
-    "role": "CEO",
-    "company": "Boateng Medical Centre",
-    "location": "",
-    "rating": 5,
-    "quote": "The IT consulting session alone was worth every pesewa. They came in, assessed our setup, and gave us a clear, prioritised action plan. No fluff, no upselling — just honest advice we could act on immediately.",
-    "featured": true,
-    "status": "published"
-  },
-  {
-    "id": "tst-antwi",
-    "name": "Fiifi Antwi",
-    "role": "Finance Director",
-    "company": "Antwi Group",
-    "location": "",
-    "rating": 5,
-    "quote": "We brought them in for data management. They cleaned up years of disorganised files, set up automated backups, and built us a simple dashboard. Our team saves hours every week now. Excellent work.",
-    "featured": false,
-    "status": "published"
-  },
-  {
     "id": "tst-macdata",
-    "name": "Fiifi Mac Data",
+    "name": "Aaron Binka",
     "role": "CEO",
     "company": "Mac Data Hub",
     "location": "",
@@ -77,57 +11,13 @@
     "status": "published"
   },
   {
-    "id": "tst-yeboah",
-    "name": "Dr. Efua Yeboah",
-    "role": "Founder",
-    "company": "Yeboah Clinic",
-    "location": "",
-    "rating": 5,
-    "quote": "The appointment system cut our waiting-room queues dramatically. Patients book online, records are instant, and the staff picked it up in a single afternoon of training.",
-    "featured": false,
-    "status": "published"
-  },
-  {
     "id": "tst-duys",
-    "name": "Kwesi Duys",
+    "name": "Mr. Christian Sominnah",
     "role": "Founder",
     "company": "Duys Social App",
     "location": "",
     "rating": 5,
     "quote": "They took a rough idea for a creator-focused social platform and turned it into a working product. Communication was clear at every stage of the build.",
-    "featured": false,
-    "status": "published"
-  },
-  {
-    "id": "tst-agyenim",
-    "name": "Grace Agyenim",
-    "role": "Headmistress",
-    "company": "Agyenim School",
-    "location": "",
-    "rating": 5,
-    "quote": "The Wi-Fi now reaches every classroom and the computer lab runs smoothly. Content filtering keeps students focused. Very professional work from survey to handover.",
-    "featured": false,
-    "status": "published"
-  },
-  {
-    "id": "tst-fortis",
-    "name": "Yaw Fortis",
-    "role": "Managing Director",
-    "company": "Fortis Pharmacy",
-    "location": "",
-    "rating": 5,
-    "quote": "We moved from an old mail server nobody wanted to touch to Microsoft 365 in under a week. Documents are finally organised and management can work from anywhere.",
-    "featured": false,
-    "status": "published"
-  },
-  {
-    "id": "tst-opoku",
-    "name": "Yaw Opoku",
-    "role": "Proprietor",
-    "company": "Opoku & Sons",
-    "location": "",
-    "rating": 5,
-    "quote": "Honest advice and fair pricing. They recommended what we needed — not what makes the biggest invoice. Our network has been stable since they took over maintenance.",
     "featured": false,
     "status": "published"
   }

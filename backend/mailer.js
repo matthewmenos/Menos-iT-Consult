@@ -229,6 +229,105 @@ async function sendContactEmails(sub) {
   return result;
 }
 
-module.exports = { sendContactEmails, resolveContactContext, getTransporter };
+// ── newsletter tip broadcast (Admin > Newsletter > "Send Email Tip") ───────
+function tipEmail({ subject, message }, ctx) {
+  const paragraphs = esc(message)
+    .split(/\n{2,}/)
+    .map((p) => `<p style="margin:0 0 16px;line-height:1.75;font-size:15px">${p.replace(/\n/g, '<br>')}</p>`)
+    .join('');
+  const wa = waLink(ctx);
+  const contactLine = [
+    ctx.email ? `&#9993; ${esc(ctx.email)}` : '',
+    ctx.phone ? `&nbsp;&middot;&nbsp; ${esc(ctx.phone)}` : '',
+    wa ? `&nbsp;&middot;&nbsp; <a href="${wa}" style="color:#1a56db">WhatsApp us</a>` : '',
+  ].filter(Boolean).join(' ');
+  const html = `
+  <div style="font-family:Inter,system-ui,Segoe UI,sans-serif;max-width:600px;margin:0 auto;color:#0f172a;background:#f1f5f9;padding:24px 12px">
+    <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
+      <div style="background:linear-gradient(135deg,#1a56db,#1e3a8a);padding:30px 32px;text-align:center">
+        <img src="${SITE_URL}/assets/logo.jpg" alt="Menos iT Consult" width="64" height="64" style="border-radius:50%;display:block;margin:0 auto 10px"/>
+        <h1 style="color:#fff;margin:0;font-size:20px">IT Tip &mdash; Menos iT Consult</h1>
+        <p style="color:#93c5fd;margin:6px 0 0;font-size:13px">Practical tech advice for your business</p>
+      </div>
+      <div style="padding:32px">
+        <h2 style="margin:0 0 18px;font-size:19px;color:#0f172a">${esc(subject)}</h2>
+        ${paragraphs}
+        <a href="${SITE_URL}" style="display:inline-block;background:#1a56db;color:#fff;text-decoration:none;padding:12px 26px;border-radius:10px;font-weight:600;font-size:14px;margin-top:6px">Visit Menos iT Consult</a>
+      </div>
+      <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:18px 32px;font-size:12px;color:#94a3b8">
+        <p style="margin:0 0 6px">Need help implementing this tip? We're one message away.</p>
+        <p style="margin:0">${contactLine}</p>
+        <p style="margin:10px 0 0">You're receiving this because you subscribed at ${SITE_URL.replace(/^https?:\/\//, '')}. Reply with "STOP" to unsubscribe.</p>
+      </div>
+    </div>
+  </div>`;
+  const text = [
+    subject,
+    '',
+    message,
+    '',
+    '-- Menos iT Consult',
+    [ctx.email, ctx.phone].filter(Boolean).join(' | '),
+    SITE_URL,
+    '',
+    'You are receiving this because you subscribed at ' + SITE_URL.replace(/^https?:\/\//, '') + '. Reply "STOP" to unsubscribe.',
+  ].join('\n');
+  return { html, text };
+}
+
+// Sends the tip to every subscriber (or just the admin when testOnly).
+// Batched 5-at-a-time so Gmail/SMTP rate limits are respected; one bad
+// address never aborts the rest. Returns per-recipient success counts.
+async function sendTipEmails({ subject, message, testOnly = false }) {
+  const result = {
+    configured: !!getTransporter(),
+    testOnly: !!testOnly,
+    testRecipient: null,
+    total: 0, sent: 0, failed: 0, errors: [],
+  };
+  const transporter = getTransporter();
+  if (!transporter) { result.error = 'SMTP not configured'; return result; }
+  const ctx = await resolveContactContext();
+
+  let recipients;
+  if (result.testOnly) {
+    recipients = ctx.email ? [ctx.email] : [];
+    result.testRecipient = ctx.email;
+  } else {
+    try {
+      recipients = (await db.getSubscribers()).map((s) => s.email);
+    } catch (err) {
+      result.error = err && err.noDb ? err.message : 'Could not load subscribers.';
+      return result;
+    }
+  }
+  if (!recipients.length) { result.error = 'No recipients'; return result; }
+  result.total = recipients.length;
+
+  const from = `"Menos iT Consult" <${process.env.SMTP_USER}>`;
+  const content = tipEmail({ subject, message }, ctx);
+  const BATCH = 5;
+  for (let i = 0; i < recipients.length; i += BATCH) {
+    await Promise.all(recipients.slice(i, i + BATCH).map((to) =>
+      transporter.sendMail({
+        from,
+        to,
+        subject,
+        html: content.html,
+        text: content.text,
+      }).then(
+        () => { result.sent++; },
+        (err) => {
+          result.failed++;
+          result.errors.push({ to, error: err && err.message ? err.message : String(err) });
+          console.error(`Tip email error [${to}]:`, err && err.message ? err.message : err);
+        }
+      ))
+    );
+  }
+  return result;
+}
+
+module.exports = { sendContactEmails, resolveContactContext, getTransporter, sendTipEmails };
 
 

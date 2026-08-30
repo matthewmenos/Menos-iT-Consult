@@ -193,9 +193,12 @@
 
         <!-- Newsletter Section -->
         <section id="section-newsletter" class="section" style="display:none">
-          <div class="section-header">
+                              <div class="section-header">
             <h3>Newsletter Subscribers</h3>
-            <span id="subscriber-count" class="count-badge"></span>
+            <div class="header-actions">
+              <span id="subscriber-count" class="count-badge"></span>
+              <button class="btn btn-primary" id="send-tip-btn">Send Email Tip</button>
+            </div>
           </div>
           <div class="table-wrap">
             <table class="data-table">
@@ -598,6 +601,40 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" id="cancel-project-btn">Cancel</button>
         <button class="btn btn-primary" id="save-project-btn">Save Project</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- Email Tip Modal -->
+  <div id="tip-modal" class="modal" style="display:none">
+    <div class="modal-overlay" id="tip-modal-overlay"></div>
+    <div class="modal-dialog modal-large">
+      <div class="modal-header">
+        <h3 id="tip-modal-title">Send Email Tip to Subscribers</h3>
+        <button class="modal-close" id="close-tip-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Subject *</label>
+          <input type="text" id="tip-subject" placeholder="e.g. How to secure your Wi-Fi in 5 minutes">
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Message (Markdown supported) *</label>
+            <textarea id="tip-message" rows="10" placeholder="Share a quick IT tip, best practice, or a link worth reading..."></textarea>
+          </div>
+          <div class="form-group flex-1">
+            <label class="checkbox-label">
+              <input type="checkbox" id="tip-test-only">
+              <span>Send to myself only (test)</span>
+            </label>
+            <div class="form-hint">Subscribers count: <span id="tip-subscriber-count">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-tip-btn">Cancel</button>
+        <button class="btn btn-primary" id="send-tip-now-btn">Send Tip</button>
       </div>
     </div>
   </div>

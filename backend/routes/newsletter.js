@@ -1,6 +1,7 @@
 const express   = require('express');
 const nodemailer = require('nodemailer');
-const db        = require('../db');
+const db     = require('../db');
+const mailer = require('../mailer');
 const requireAuth = require('../middleware/auth');
 const router    = express.Router();
 
@@ -91,6 +92,49 @@ router.delete('/subscribers/:email', requireAuth, async (req, res) => {
     if (err.noDb) {
       return res.status(503).json({ error: err.message });    }
     res.status(500).json({ error: 'Database error.' });
+  }
+});
+
+// POST /send — admin: send an email "tip" to all (or test to) subscribers
+router.post('/send', requireAuth, async (req, res) => {
+  const { subject, message, testOnly } = req.body || {};
+
+  if (!subject || !message) {
+    return res.status(400).json({ error: 'Subject and message are required.' });
+  }
+
+  try {
+    const result = await mailer.sendTipEmails({
+      subject,
+      message,
+      testOnly: !!testOnly,
+    });
+
+    if (result.error) {
+      // Not configured, no recipients, etc. — surface to the UI.
+      return res.status(200).json({
+        success: false,
+        message: result.error,
+        configured: result.configured,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: testOnly
+        ? `Test tip sent to ${result.testRecipient}.`
+        : `Tip sent to ${result.sent}/${result.total} subscribers.`,
+      sent: result.sent,
+      failed: result.failed,
+      total: result.total,
+      errors: result.errors,
+    });
+    } catch (err) {
+    console.error('Tip broadcast error:', err);
+    res.status(500).json({
+      success: false,
+      message: err && err.message ? err.message : 'Broadcast failed.',
+    });
   }
 });
 

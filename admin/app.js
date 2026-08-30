@@ -469,15 +469,84 @@ async function deleteSubscriber(email) {
       const err = await res.json();
       showToast(err.error || 'Failed to remove.', 'error');
     }
-  } catch { showToast('Network error.', 'error'); }
+    } catch { showToast('Network error.', 'error'); }
 }
 
 // ─────────────────────────────────────────────
-// Settings — change password
+// Email Tip (Newsletter broadcast)
 // ─────────────────────────────────────────────
+async function openTipModal() {
+  const modal = document.getElementById('tip-modal');
+  const subj  = document.getElementById('tip-subject');
+  const msg   = document.getElementById('tip-message');
+  const hint  = document.getElementById('tip-subscriber-count');
+
+  subj.value = '';
+  msg.value  = '';
+  document.getElementById('tip-test-only').checked = false;
+
+  // Resolve current subscriber count for context (do not block on failure)
+  try {
+    const res = await fetch(`${API}/api/newsletter/subscribers`, { credentials: 'include' });
+    const data = res.ok ? await res.json() : {};
+    const count = (data.subscribers || []).length;
+    hint.textContent = count ? `${count} subscribers` : '—';
+  } catch {
+    hint.textContent = '—';
+  }
+
+  modal.style.display = '';
+  setTimeout(() => { subj.focus(); }, 50);
+}
+
+function closeTipModal() {
+  document.getElementById('tip-modal').style.display = 'none';
+}
+
+async function sendTip() {
+  const subj = document.getElementById('tip-subject').value.trim();
+  const msg  = document.getElementById('tip-message').value.trim();
+
+  if (!subj || !msg) {
+    showToast('Subject and message are required.', 'error');
+    return;
+  }
+
+  const testOnly  = document.getElementById('tip-test-only').checked;
+  const btn       = document.getElementById('send-tip-now-btn');
+  const origText  = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  try {
+    const res = await fetch(`${API}/api/newsletter/send`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject: subj, message: msg, testOnly }),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast(data.message || 'Tip sent!');
+      closeTipModal();
+    } else {
+      const detail = (data.errors && data.errors.length) ? ` (${data.errors.length} failed)` : '';
+      showToast((data.message || 'Send failed.') + detail, 'error');
+    }
+  } catch {
+    showToast('Network error.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origText;
+  }
+}
+
 // ─────────────────────────────────────────────
 // Testimonials
 // ─────────────────────────────────────────────
+
+
 let _testimonials = [];
 let currentTestId = null;
 
@@ -884,6 +953,16 @@ document.getElementById('project-modal-overlay').addEventListener('click', close
 document.getElementById('save-project-btn').addEventListener('click', saveProject);
 
 // ─────────────────────────────────────────────
+// Email Tip modal controls
+// ─────────────────────────────────────────────
+document.getElementById('send-tip-btn').addEventListener('click', openTipModal);
+document.getElementById('close-tip-modal').addEventListener('click', closeTipModal);
+document.getElementById('cancel-tip-btn').addEventListener('click', closeTipModal);
+document.getElementById('tip-modal-overlay').addEventListener('click', closeTipModal);
+document.getElementById('send-tip-now-btn').addEventListener('click', sendTip);
+
+
+// ─────────────────────────────────────────────
 // Settings — change password
 // ─────────────────────────────────────────────
 // ─────────────────────────────────────────────
@@ -1218,8 +1297,11 @@ function escAttr(str) {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (document.getElementById('blog-modal').style.display !== 'none') closeBlogModal();
-    if (document.getElementById('message-modal').style.display !== 'none') {
+        if (document.getElementById('message-modal').style.display !== 'none') {
       document.getElementById('message-modal').style.display = 'none';
+    }
+    if (document.getElementById('tip-modal').style.display !== 'none') {
+      document.getElementById('tip-modal').style.display = 'none';
     }
   }
 });
