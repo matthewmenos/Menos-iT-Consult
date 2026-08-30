@@ -167,12 +167,15 @@
       e.preventDefault();
       const btn = contactForm.querySelector('button[type="submit"]');
       const inputs = contactForm.querySelectorAll('input,select,textarea');
+
+      // Serialize BEFORE disabling anything: FormData omits disabled controls,
+      // so collecting values afterwards would always send an empty payload.
+      const fd = new FormData(contactForm);
+      const payload = Object.fromEntries([...fd.entries()].map(([k, v]) => [k, String(v).trim()]));
+
       btn.textContent = 'Sending…';
       btn.disabled = true;
       inputs.forEach(el => el.disabled = true);
-
-      const fd = new FormData(contactForm);
-      const payload = Object.fromEntries([...fd.entries()].map(([k, v]) => [k, v.trim()]));
 
       try {
         const res  = await fetch(`${API}/contact`, {
