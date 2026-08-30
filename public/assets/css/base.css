@@ -129,6 +129,11 @@ ul { list-style: none; }
   color: #fff; font-size: 1.1rem; font-weight: 900;
   display: grid; place-items: center; flex-shrink: 0;
 }
+/* Real logo asset (assets/logo.jpg) used in .logo lockups and preloaders */
+.logo-img {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: block; flex-shrink: 0;
+}
 .nav-links { display: flex; gap: 32px; margin-left: auto; }
 .nav-links a {
   font-size: .9rem; font-weight: 500; color: var(--muted);
