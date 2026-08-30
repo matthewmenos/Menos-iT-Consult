@@ -352,6 +352,22 @@ async function saveMessage(m) {
   return mapMessage(rows[0]);
 }
 
+// Flat-file fallback for contact-form enquiries. Used when Postgres is
+// unavailable (or the write fails) so an enquiry is never lost. The entries
+// are picked up by seedAll() into the `messages` table once Postgres is
+// configured (idempotent by id).
+async function saveMessageFile(m) {
+  const file = path.join(DATA_DIR, 'messages.json');
+  let all = readSeedJson('messages.json', []);
+  if (!Array.isArray(all)) all = [];
+  if (!all.some(x => x.id === m.id)) {
+    all.push(m);
+    fs.writeFileSync(file, JSON.stringify(all, null, 2), 'utf8');
+    all = readSeedJson('messages.json', []);
+  }
+  return all.find(x => x.id === m.id) || m;
+}
+
 // â”€â”€ subscribers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function getSubscribers() {
   const { rows } = await needPool().query('SELECT * FROM subscribers ORDER BY subscribed_at DESC');
@@ -647,6 +663,21 @@ async function seedAll(log = () => {}) {
     });
     log('[seed] default contact info seeded');
   }
+  if (!(await getSetting('trustedLogos'))) {
+    await setSetting('trustedLogos', [
+      { name: 'KAB Enterprises' },
+      { name: 'Sarpong & Co.' },
+      { name: 'Mensah Logistics' },
+      { name: 'Asante Trading Co.' },
+      { name: 'Boateng Medical Centre' },
+      { name: 'Mac Data Hub' },
+      { name: 'Fortis Pharmacy' },
+      { name: 'Agyenim School' },
+      { name: 'Antwi Group' },
+      { name: 'Yeboah Clinic' },
+    ]);
+    log('[seed] default trusted company logos seeded');
+  }
 }
 
 module.exports = {
@@ -655,7 +686,7 @@ module.exports = {
   seedAll,
   ensureReady,
   getBlogs, getBlog, getBlogBySlug, createBlog, updateBlog, deleteBlog, setBlogStatus,
-  getMessages, getMessage, deleteMessage, markMessageRead, saveMessage,
+  getMessages, getMessage, deleteMessage, markMessageRead, saveMessage, saveMessageFile,
   getSubscribers, addSubscriber, deleteSubscriber,
   getTestimonials, getTestimonial, createTestimonial, updateTestimonial, deleteTestimonial, setTestimonialStatus,
   getProjects, getProject, createProject, updateProject, deleteProject, setProjectStatus,

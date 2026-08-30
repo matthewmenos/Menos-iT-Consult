@@ -607,6 +607,16 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.3; }
   border-bottom: 1px solid var(--border);
 }
 
+/* ── Trusted-company logo editor ───────────────────────────────────────── */
+.settings-hint { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: -8px 0 18px; }
+.logo-list  { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.logo-row   { display: flex; gap: 8px; align-items: center; }
+.logo-row input { flex: 1; min-width: 0; }
+.logo-row .logo-image { flex: 1.4; }
+.logo-row .logo-remove { flex-shrink: 0; padding: 8px 12px; line-height: 1; font-size: 1rem; }
+.logo-actions { margin-bottom: 14px; }
+.settings-save { margin-top: 4px; }
+
 /* ============================================================
    Info Card (Testimonials notice)
    ============================================================ */

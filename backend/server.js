@@ -99,7 +99,7 @@ app.get('/admin/{*path}', (req, res) => {
 
 // -- API routes ----------------------------------------------------------------
 app.use('/api/auth',       authRoute);
-app.use('/api/contact',    requireDb, contactRoute);   // enquiries must persist; 503 (not silent loss) without a DB
+app.use('/api/contact',    contactRoute);   // enquiries never blocked by DB state — persists to Postgres (or flat-file fallback) AND emails the admin
 app.use('/api/newsletter', requireDb, newsletterRoute);
 app.use('/api/blogs',      requireDb, blogsRoute);
 app.use('/api/messages',   requireDb, messagesRoute);

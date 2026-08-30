@@ -16,6 +16,18 @@ const DEFAULT_SETTINGS = {
     whatsapp: '233549128384',
     location: 'Agona, Western Region, Ghana',
   },
+  trustedLogos: [
+    { name: 'KAB Enterprises' },
+    { name: 'Sarpong & Co.' },
+    { name: 'Mensah Logistics' },
+    { name: 'Asante Trading Co.' },
+    { name: 'Boateng Medical Centre' },
+    { name: 'Mac Data Hub' },
+    { name: 'Fortis Pharmacy' },
+    { name: 'Agyenim School' },
+    { name: 'Antwi Group' },
+    { name: 'Yeboah Clinic' },
+  ],
 };
 
 router.get('/testimonials', async (req, res) => {

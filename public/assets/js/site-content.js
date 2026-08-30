@@ -180,9 +180,25 @@
     grid.innerHTML = list.map(renderProject).join('');
   }
 
+  /* ── trusted-company logos (homepage marquee) ───────────────────────────── */
+  function renderLogos(logos) {
+    const track = document.getElementById('marqueeTrack');
+    if (!track || !Array.isArray(logos) || logos.length === 0) return; // keep static fallback
+    const item = (l) => {
+      const name = esc(l && l.name);
+      const img = l && l.image ? '<img src="' + esc(l.image) + '" alt="' + name + '" loading="lazy">' : '';
+      return '<div class="marquee-item marquee-logo">' + (img || name) + '</div>';
+    };
+    // Two copies for the seamless -50% translate loop
+    track.innerHTML = logos.map(item).join('') + logos.map(item).join('');
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     const settings = await getJSON('/api/content/settings');
-    if (settings && typeof settings === 'object') applySettings(settings);
+    if (settings && typeof settings === 'object') {
+      applySettings(settings);
+      renderLogos(settings.trustedLogos);
+    }
     initTestimonials();
     initProjects();
   });

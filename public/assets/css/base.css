@@ -493,6 +493,12 @@ img.tcard-av-img { object-fit: cover; border: 2px solid var(--blue-mid); }
   background: #fff; border: 1px solid var(--border); border-radius: 100px;
   padding: 10px 20px; white-space: nowrap;
 }
+/* Trusted-company "logo" chips — name text or optional logo image */
+.marquee-logo {
+  font-weight: 700; font-size: .82rem; letter-spacing: .05em;
+  color: #334155; text-transform: uppercase;
+}
+.marquee-item img { display: block; height: 30px; width: auto; max-width: 140px; object-fit: contain; }
 .marquee-stars  { color: #f59e0b; font-size: .85rem; letter-spacing: 1px; }
 .marquee-quote  { font-size: .83rem; color: var(--body); font-style: italic; max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
 .marquee-author { font-size: .76rem; font-weight: 700; color: var(--muted); }

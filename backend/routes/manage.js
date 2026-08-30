@@ -73,8 +73,19 @@ router.post('/testimonials', async (req, res) => {
     if (!cleanStr(b.name) || !cleanStr(b.quote)) {
       return res.status(400).json({ error: 'Name and quote are required.' });
     }
+    // Honour a client-supplied id (url-safe, unused), otherwise generate one.
+    let id = newId('tst');
+    if (cleanStr(b.id)) {
+      const wanted = cleanStr(b.id).replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
+      if (wanted) {
+        if (await db.getTestimonial(wanted)) {
+          return res.status(409).json({ error: 'A testimonial with that id already exists.' });
+        }
+        id = wanted;
+      }
+    }
     const t = await db.createTestimonial({
-      id: newId('tst'),
+      id,
       name: cleanStr(b.name).slice(0, 120),
       role: cleanStr(b.role).slice(0, 120),
       company: cleanStr(b.company).slice(0, 120),
@@ -145,8 +156,19 @@ router.post('/projects', async (req, res) => {
   try {
     const b = req.body || {};
     if (!cleanStr(b.title)) return res.status(400).json({ error: 'Title is required.' });
+    // Honour a client-supplied id (url-safe, unused), otherwise generate one.
+    let id = newId('prj');
+    if (cleanStr(b.id)) {
+      const wanted = cleanStr(b.id).replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
+      if (wanted) {
+        if (await db.getProject(wanted)) {
+          return res.status(409).json({ error: 'A project with that id already exists.' });
+        }
+        id = wanted;
+      }
+    }
     const p = await db.createProject({
-      id: newId('prj'),
+      id,
       title: cleanStr(b.title).slice(0, 200),
       category: cleanStr(b.category).slice(0, 40),
       client: cleanStr(b.client).slice(0, 120),
@@ -242,8 +264,19 @@ router.put('/settings', async (req, res) => {
         location: cleanStr(c.location).slice(0, 200),
       }]);
     }
+    if (b.trustedLogos && Array.isArray(b.trustedLogos)) {
+      const logos = b.trustedLogos
+        .map(l => (typeof l === 'string' ? { name: l } : l))
+        .filter(l => l && typeof l === 'object' && cleanStr(l.name))
+        .slice(0, 60)
+        .map(l => ({
+          name: cleanStr(l.name).slice(0, 120),
+          image: cleanStr(l.image).slice(0, 500),
+        }));
+      if (logos.length) entries.push(['trustedLogos', logos]);
+    }
     if (entries.length === 0) {
-      return res.status(400).json({ error: 'No valid settings provided (expected stats and/or contact).' });
+      return res.status(400).json({ error: 'No valid settings provided (expected stats and/or contact and/or trustedLogos).' });
     }
     await db.upsertSettings(entries);
     const rows = await db.getSettings();

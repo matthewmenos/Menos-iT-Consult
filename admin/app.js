@@ -907,10 +907,85 @@ async function loadSettings() {
     document.getElementById('contact-phone').value    = c.phone ?? '';
     document.getElementById('contact-whatsapp').value = c.whatsapp ?? '';
     document.getElementById('contact-location').value = c.location ?? '';
+    // Trusted-company logos (homepage marquee)
+    const logos = Array.isArray(data.trustedLogos) ? data.trustedLogos : [];
+    renderLogosAdmin(logos);
   } catch {
     showToast('Network error while loading settings.', 'error');
   }
 }
+
+// ── Trusted-company logo editor ─────────────────────────────────────────
+function logoRowHtml(name, image) {
+  return `
+    <div class="logo-row">
+      <input type="text" class="logo-name" placeholder="Company name" value="${escAttr(name || '')}">
+      <input type="url" class="logo-image" placeholder="Logo image URL (optional)" value="${escAttr(image || '')}">
+      <button type="button" class="btn btn-sm btn-danger logo-remove" aria-label="Remove company" title="Remove">&times;</button>
+    </div>`;
+}
+
+function renderLogosAdmin(logos) {
+  const list = document.getElementById('logo-list');
+  if (!list) return;
+  const items = Array.isArray(logos) ? logos : [];
+  list.innerHTML = items.length
+    ? items.map(l => logoRowHtml(l.name, l.image)).join('')
+    : '<p class="settings-hint" style="margin:0 0 4px">No companies yet — add one below.</p>';
+}
+
+function addLogoRow(name, image) {
+  const list = document.getElementById('logo-list');
+  if (!list) return;
+  if (list.querySelector('.settings-hint')) list.innerHTML = '';
+  list.insertAdjacentHTML('beforeend', logoRowHtml(name || '', image || ''));
+  list.lastElementChild.querySelector('.logo-name').focus();
+}
+
+function collectLogos() {
+  return Array.from(document.querySelectorAll('#logo-list .logo-row')).map((row) => ({
+    name: row.querySelector('.logo-name').value.trim(),
+    image: row.querySelector('.logo-image').value.trim(),
+  })).filter(l => l.name);
+}
+
+document.getElementById('add-logo-btn').addEventListener('click', () => addLogoRow());
+
+// Remove a logo row (event delegation)
+document.getElementById('logo-list').addEventListener('click', (e) => {
+  const btn = e.target.closest('.logo-remove');
+  if (btn) btn.closest('.logo-row').remove();
+});
+
+document.getElementById('save-logos-btn').addEventListener('click', async () => {
+  const logos = collectLogos();
+  if (logos.length === 0) {
+    showToast('Add at least one company name first.', 'error');
+    return;
+  }
+  const btn = document.getElementById('save-logos-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  try {
+    const res = await fetch(`${API}/api/manage/settings`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ trustedLogos: logos }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showToast('Trusted companies saved — the homepage marquee now uses them.');
+    } else {
+      showToast(data.error || 'Failed to save trusted companies.', 'error');
+    }
+  } catch {
+    showToast('Network error.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save Trusted Companies';
+  }
+});
 
 document.getElementById('content-form').addEventListener('submit', async (e) => {
   e.preventDefault();
