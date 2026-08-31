@@ -502,7 +502,7 @@ async function setProjectStatus(id, status) {
 // â”€â”€ settings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // â”€â”€ uploaded images (bytes in Postgres; served via GET /api/images/:id) â”€â”€â”€â”€â”€â”€
 const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
-const IMAGE_MAX_BYTES = 4 * 1024 * 1024; // Vercel request body cap is ~4.5 MB
+const IMAGE_MAX_BYTES = 16 * 1024 * 1024; // inline upload cap; presigned R2 path allows up to 100 MB
 
 async function saveImage(buffer, mime) {
   if (!Buffer.isBuffer(buffer) || buffer.length === 0) {
@@ -512,7 +512,7 @@ async function saveImage(buffer, mime) {
     const e = new Error('Unsupported image type. Use JPEG, PNG, WebP, GIF or AVIF.'); e.badRequest = true; throw e;
   }
   if (buffer.length > IMAGE_MAX_BYTES) {
-    const e = new Error('Image too large (max 4 MB).'); e.badRequest = true; throw e;
+    const e = new Error('Image too large (max 16 MB).'); e.badRequest = true; throw e;
   }
   const id = 'img-' + Date.now().toString(36) + crypto.randomBytes(6).toString('hex');
   await needPool().query(

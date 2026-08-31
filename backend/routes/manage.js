@@ -47,15 +47,15 @@ function cleanImage(v) {
 // image/jpeg etc.) — no multipart parser needed. Returns { id, url }.
 router.post(
   '/upload',
-  express.raw({ type: () => true, limit: '4mb' }),
+  express.raw({ type: () => true, limit: '16mb' }),
   async (req, res) => {
     try {
       const mime = (req.headers['content-type'] || '').split(';')[0].trim();
       if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
         return res.status(400).json({ error: 'Empty upload.' });
       }
-      if (req.body.length > 4 * 1024 * 1024) {
-        return res.status(400).json({ error: 'Image too large (max 4 MB).' });
+      if (req.body.length > 16 * 1024 * 1024) {
+        return res.status(400).json({ error: 'Image too large (max 16 MB).' });
       }
       // R2 when configured; Postgres bytea otherwise (legacy path still works)
       if (r2.r2Enabled()) {
@@ -78,6 +78,58 @@ router.post(
     }
   }
 );
+
+// Presigned direct-to-R2 uploads (two steps, for large files):
+//   1) GET /api/manage/upload/presign?mime=image/png  → one-time PUT URL
+//   2) browser PUTs bytes straight to R2, then POSTs /upload/complete
+//      with the key so we register the DB row and return the same { id, url }
+// shape as the inline upload. This bypasses the serverless request-body cap
+// (~4.5 MB on Vercel) entirely — the bytes never touch our server.
+const UPLOAD_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+const DIRECT_MAX_BYTES = 100 * 1024 * 1024; // 100 MB presigned ceiling
+
+router.get('/upload/presign', async (req, res) => {
+  try {
+    if (!r2.r2Enabled()) {
+      return res.status(501).json({ error: 'Direct uploads unavailable (R2 not configured).', fallback: true });
+    }
+    const mime = cleanStr(req.query.mime).split(';')[0].trim();
+    if (!UPLOAD_MIMES.includes(mime)) {
+      return res.status(400).json({ error: 'Unsupported image type. Use JPEG, PNG, WebP, GIF or AVIF.' });
+    }
+    const signed = await r2.presignPut(mime);
+    res.json({ id: signed.id, key: signed.key, mime: signed.mime, uploadUrl: signed.uploadUrl, publicUrl: signed.publicUrl });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to sign upload.' });
+  }
+});
+
+router.post('/upload/complete', express.json({ limit: '64kb' }), async (req, res) => {
+  try {
+    if (!r2.r2Enabled()) {
+      return res.status(501).json({ error: 'R2 not configured.' });
+    }
+    const b = req.body || {};
+    const m = typeof b.key === 'string' && b.key.match(/^media\/(\d{4})\/(img-[a-z0-9]+)\.([a-z0-9]+)$/);
+    if (!m) return res.status(400).json({ error: 'Invalid object key.' });
+    if (!UPLOAD_MIMES.includes(cleanStr(b.mime))) {
+      return res.status(400).json({ error: 'Unsupported image type.' });
+    }
+    const size = Number(b.size);
+    if (!Number.isFinite(size) || size <= 0 || size > DIRECT_MAX_BYTES) {
+      return res.status(400).json({ error: 'Invalid file size.' });
+    }
+    const id = m[2];
+    const publicUrl = r2.publicBase() ? `${r2.publicBase()}/${b.key}` : null;
+    const saved = await db.saveImageRef(id, cleanStr(b.mime), Math.round(size), b.key, publicUrl);
+    res.status(201).json(saved);
+  } catch (err) {
+    if (err.noDb) return res.status(503).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to register upload.' });
+  }
+});
 
 // ── testimonials ───────────────────────────────────────────────────────────
 router.get('/testimonials', async (req, res) => {

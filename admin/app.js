@@ -861,14 +861,49 @@ async function deleteProject(id) {
   } catch { showToast('Network error.', 'error'); }
 }
 
-// ─────────────────────────────────────────────
-// Image pickers (project cover / testimonial photo)
-// ─────────────────────────────────────────────
-async function uploadImageFile(file) {
+// Shared media uploader — presigned direct-to-R2 first (bytes go browser → R2,
+// bypassing the ~4.5 MB serverless body cap), falling back to the inline
+// server route when R2 is not configured.
+async function uploadMediaFile(file) {
+  const mime = file.type || 'application/octet-stream';
+
+  // 1) Presigned direct-to-R2
+  try {
+    const pre = await fetch(`${API}/api/manage/upload/presign?mime=${encodeURIComponent(mime)}`, {
+      credentials: 'include',
+    });
+    if (pre.ok) {
+      const { uploadUrl, key, mime: signedMime } = await pre.json();
+      const put = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': signedMime || mime },
+        body: file,
+      });
+      if (!put.ok) throw Object.assign(new Error(`R2 rejected the upload (HTTP ${put.status}).`), { fatal: true });
+      const done = await fetch(`${API}/api/manage/upload/complete`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, mime: signedMime || mime, size: file.size }),
+      });
+      if (!done.ok) {
+        const e = await done.json().catch(() => ({}));
+        throw Object.assign(new Error(e.error || 'Upload registration failed.'), { fatal: true });
+      }
+      return (await done.json()).url;
+    }
+    // Not ok → 501 (R2 not configured) or transient error → try inline below.
+  } catch (err) {
+    // Bytes already reached R2 → don't silently re-upload inline (would duplicate).
+    if (err && err.fatal) throw err;
+    // Presign step failed → fall through to inline.
+  }
+
+  // 2) Inline fallback (legacy / no-R2 mode)
   const res = await fetch(`${API}/api/manage/upload`, {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    headers: { 'Content-Type': mime },
     body: file,
   });
   if (!res.ok) {
@@ -878,7 +913,12 @@ async function uploadImageFile(file) {
   return (await res.json()).url;
 }
 
-const MAX_IMAGE_MB = 4;
+// Existing call sites keep working under the old name.
+const uploadImageFile = uploadMediaFile;
+
+// Client-side guard matches the server's 16 MB inline cap. The R2 path allows
+// up to 100 MB server-side, but 16 MB is plenty for site imagery.
+const MAX_IMAGE_MB = 16;
 
 function createImagePicker(prefix) {
   const preview  = document.getElementById(`${prefix}-image-preview`);
@@ -999,8 +1039,20 @@ async function loadSettings() {
 function logoRowHtml(name, image) {
   return `
     <div class="logo-row">
-      <input type="text" class="logo-name" placeholder="Company name" value="${escAttr(name || '')}">
-      <input type="url" class="logo-image" placeholder="Logo image URL (optional)" value="${escAttr(image || '')}">
+      <div class="logo-cell">
+        <label>Company</label>
+        <input type="text" class="logo-name" placeholder="Company name" value="${escAttr(name || '')}">
+      </div>
+      <div class="logo-cell">
+        <label>Logo image</label>
+        <div class="logo-upload">
+          <input type="hidden" class="logo-image" value="${escAttr(image || '')}">
+          <img class="logo-preview" src="${escAttr(image || '')}" alt="" ${image ? '' : 'style="display:none"'}>
+          <span class="logo-fallback" ${image ? 'style="display:none"' : ''}>No logo</span>
+          <input type="file" class="logo-file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/svg+xml" style="display:none">
+          <button type="button" class="btn btn-sm btn-secondary logo-upload-btn">${image ? 'Replace' : 'Upload'}</button>
+        </div>
+      </div>
       <button type="button" class="btn btn-sm btn-danger logo-remove" aria-label="Remove company" title="Remove">&times;</button>
     </div>`;
 }
@@ -1033,8 +1085,42 @@ document.getElementById('add-logo-btn').addEventListener('click', () => addLogoR
 
 // Remove a logo row (event delegation)
 document.getElementById('logo-list').addEventListener('click', (e) => {
-  const btn = e.target.closest('.logo-remove');
-  if (btn) btn.closest('.logo-row').remove();
+  const rm = e.target.closest('.logo-remove');
+  if (rm) { rm.closest('.logo-row').remove(); return; }
+  const up = e.target.closest('.logo-upload-btn');
+  if (up) up.closest('.logo-upload').querySelector('.logo-file').click();
+});
+
+// Upload a chosen logo file → shared uploader (R2 direct, inline fallback) →
+// store the returned URL in the row.
+async function uploadLogoFile(row, file) {
+  const MAX = MAX_IMAGE_MB * 1024 * 1024;
+  if (file.size > MAX) { showToast(`Image too large (max ${MAX_IMAGE_MB} MB).`, 'error'); return; }
+  const btn = row.querySelector('.logo-upload-btn');
+  const old = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Uploading...';
+  try {
+    const url = await uploadMediaFile(file);
+    row.querySelector('.logo-image').value = url;
+    const img = row.querySelector('.logo-preview');
+    img.src = url; img.style.display = '';
+    row.querySelector('.logo-fallback').style.display = 'none';
+    btn.textContent = 'Replace';
+    showToast('Logo uploaded.');
+  } catch (err) {
+    btn.textContent = old;
+    showToast(err && err.message ? err.message : 'Network error during upload.', 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('logo-list').addEventListener('change', (e) => {
+  const input = e.target.closest('.logo-file');
+  if (input && input.files && input.files[0]) {
+    uploadLogoFile(input.closest('.logo-row'), input.files[0]);
+    input.value = ''; // allow re-picking the same file
+  }
 });
 
 document.getElementById('save-logos-btn').addEventListener('click', async () => {

@@ -77,4 +77,25 @@ async function getImageBytes(key) {
   return Buffer.from(await out.transformToByteArray());
 }
 
-module.exports = { r2Enabled, publicBase, putImage, getImageBytes };
+/**
+ * Presigned PUT for direct browser→R2 uploads. The server never sees the
+ * bytes, so file size is not bound by the serverless request-body cap
+ * (~4.5 MB on Vercel). Returns { id, key, mime, uploadUrl, publicUrl }.
+ */
+async function presignPut(mime) {
+  const { PutObjectCommand } = require('@aws-sdk/client-s3');
+  const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+  const ext = EXT[mime] || 'bin';
+  const id = 'img-' + Date.now().toString(36) + crypto.randomBytes(6).toString('hex');
+  const key = `media/${new Date().getFullYear()}/${id}.${ext}`;
+  const cmd = new PutObjectCommand({
+    Bucket: env('R2_BUCKET'),
+    Key: key,
+    ContentType: mime,
+    CacheControl: 'public, max-age=31536000, immutable',
+  });
+  const uploadUrl = await getSignedUrl(getClient(), cmd, { expiresIn: 600 });
+  return { id, key, mime, uploadUrl, publicUrl: publicBase() ? `${publicBase()}/${key}` : null };
+}
+
+module.exports = { r2Enabled, publicBase, putImage, getImageBytes, presignPut };
