@@ -423,11 +423,11 @@ async function deleteMessage(id) {
 async function loadNewsletter() {
   const tbody = document.getElementById('newsletter-tbody');
   const countEl = document.getElementById('subscriber-count');
-  tbody.innerHTML = '<tr><td colspan="3" class="empty-row">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="4" class="empty-row">Loading...</td></tr>';
   try {
     const res = await fetch(`${API}/api/newsletter/subscribers`, { credentials: 'include' });
     if (!res.ok) {
-      tbody.innerHTML = '<tr><td colspan="3" class="empty-row">Failed to load subscribers.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" class="empty-row">Failed to load subscribers.</td></tr>';
       return;
     }
     const data = await res.json();
@@ -435,7 +435,7 @@ async function loadNewsletter() {
     countEl.textContent = `${subscribers.length} subscriber${subscribers.length !== 1 ? 's' : ''}`;
 
     if (subscribers.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="3" class="empty-row">No subscribers yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" class="empty-row">No subscribers yet.</td></tr>';
       return;
     }
 
@@ -444,6 +444,7 @@ async function loadNewsletter() {
 
     tbody.innerHTML = sorted.map(s => `
       <tr>
+        <td>${escHtml([s.firstName, s.lastName].filter(Boolean).join(' ').trim() || '—')}</td>
         <td>${escHtml(s.email)}</td>
         <td>${fmtDate(s.subscribedAt)}</td>
         <td>
@@ -452,7 +453,7 @@ async function loadNewsletter() {
       </tr>
     `).join('');
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="3" class="empty-row">Error loading subscribers.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-row">Error loading subscribers.</td></tr>';
     console.error('loadNewsletter error:', err);
   }
 }

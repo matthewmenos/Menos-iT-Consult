@@ -204,13 +204,14 @@
             <table class="data-table">
               <thead>
                 <tr>
+                  <th>Name</th>
                   <th>Email</th>
                   <th>Subscribed Date</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="newsletter-tbody">
-                <tr><td colspan="3" class="empty-row">Loading...</td></tr>
+                <tr><td colspan="4" class="empty-row">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -621,7 +622,8 @@
         <div class="form-row">
           <div class="form-group flex-1">
             <label>Message (Markdown supported) *</label>
-            <textarea id="tip-message" rows="10" placeholder="Share a quick IT tip, best practice, or a link worth reading..."></textarea>
+            <textarea id="tip-message" rows="10" placeholder="Hi {{firstName}}, here's a quick IT tip..."></textarea>
+            <div class="form-hint">Personalise with variables: <code>{{firstName}}</code> <code>{{lastName}}</code> <code>{{fullName}}</code> <code>{{email}}</code></div>
           </div>
           <div class="form-group flex-1">
             <label class="checkbox-label">

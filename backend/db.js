@@ -147,7 +147,12 @@ function mapMessage(r) {
   };
 }
 function mapSubscriber(r) {
-  return { email: r.email, subscribedAt: iso(r.subscribed_at) };
+  return {
+    email: r.email,
+    firstName: r.first_name || '',
+    lastName: r.last_name || '',
+    subscribedAt: iso(r.subscribed_at),
+  };
 }
 function mapTestimonial(r) {
   return {
@@ -228,6 +233,8 @@ async function initDb() {
   );`);
     await q(`CREATE TABLE IF NOT EXISTS subscribers (
     email text PRIMARY KEY,
+    first_name text,
+    last_name text,
     subscribed_at timestamptz DEFAULT now()
   );`);
   await q(`CREATE TABLE IF NOT EXISTS testimonials (
@@ -248,6 +255,9 @@ async function initDb() {
   // image column migration for databases bootstrapped before images existed
   await q('ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS image text');
   await q('ALTER TABLE projects ADD COLUMN IF NOT EXISTS image text');
+  // name columns for newsletter subscribers (bootstrap before these existed)
+  await q('ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS first_name text');
+  await q('ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS last_name text');
   // uploaded image bytes (served back via GET /api/images/:id) â€” the Vercel
   // filesystem is read-only, so binaries live in Postgres
   await q(`CREATE TABLE IF NOT EXISTS images (
@@ -257,6 +267,10 @@ async function initDb() {
     size int NOT NULL,
     created_at timestamptz DEFAULT now()
   );`);
+  // R2-backed media: storage='r2' rows keep only metadata (bytes live in R2)
+  await q("ALTER TABLE images ADD COLUMN IF NOT EXISTS storage text DEFAULT 'db'");
+  await q('ALTER TABLE images ADD COLUMN IF NOT EXISTS r2_key text');
+  await q('ALTER TABLE images ALTER COLUMN bytes DROP NOT NULL');
   await q(`CREATE TABLE IF NOT EXISTS settings (
     key text PRIMARY KEY,
     value jsonb
@@ -373,11 +387,14 @@ async function getSubscribers() {
   const { rows } = await needPool().query('SELECT * FROM subscribers ORDER BY subscribed_at DESC');
   return rows.map(mapSubscriber);
 }
-async function addSubscriber(email) {
+async function addSubscriber(email, firstName = '', lastName = '') {
   const { rows } = await needPool().query(
-    `INSERT INTO subscribers (email) VALUES ($1)
-     ON CONFLICT (email) DO NOTHING RETURNING *`,
-    [email]
+    `INSERT INTO subscribers (email, first_name, last_name) VALUES ($1,$2,$3)
+     ON CONFLICT (email) DO UPDATE
+       SET first_name = COALESCE(NULLIF($2,''), subscribers.first_name),
+           last_name  = COALESCE(NULLIF($3,''), subscribers.last_name)
+     RETURNING *`,
+    [email, firstName, lastName]
   );
   return rows[0] ? mapSubscriber(rows[0]) : null;
 }
@@ -505,14 +522,33 @@ async function saveImage(buffer, mime) {
   return { id, url: `/api/images/${id}`, mime, size: buffer.length };
 }
 
+/**
+ * R2-backed upload: record metadata only (bytes live in Cloudflare R2).
+ * Returns { id, url, mime, size } — url is the public R2 URL when
+ * R2_PUBLIC_BASE is set, otherwise /api/images/:id (proxied from R2).
+ */
+async function saveImageRef(id, mime, size, r2Key, publicUrl) {
+  await needPool().query(
+    `INSERT INTO images (id, mime, bytes, size, storage, r2_key)
+     VALUES ($1,$2,NULL,$3,'r2',$4)`,
+    [id, mime, size, r2Key]
+  );
+  return { id, url: publicUrl || `/api/images/${id}`, mime, size };
+}
+
 async function getImage(id) {
   const { rows } = await needPool().query('SELECT * FROM images WHERE id = $1', [id]);
   if (!rows[0]) return null;
+  const r = rows[0];
+  if (r.storage === 'r2') {
+    return { id: r.id, mime: r.mime, size: Number(r.size), storage: 'r2', r2Key: r.r2_key, bytes: null };
+  }
   return {
-    id: rows[0].id,
-    mime: rows[0].mime,
-    size: Number(rows[0].size),
-    bytes: Buffer.isBuffer(rows[0].bytes) ? rows[0].bytes : Buffer.from(rows[0].bytes),
+    id: r.id,
+    mime: r.mime,
+    size: Number(r.size),
+    storage: 'db',
+    bytes: Buffer.isBuffer(r.bytes) ? r.bytes : Buffer.from(r.bytes),
   };
 }
 
@@ -690,7 +726,7 @@ module.exports = {
   getSubscribers, addSubscriber, deleteSubscriber,
   getTestimonials, getTestimonial, createTestimonial, updateTestimonial, deleteTestimonial, setTestimonialStatus,
   getProjects, getProject, createProject, updateProject, deleteProject, setProjectStatus,
-  saveImage, getImage,
+  saveImage, saveImageRef, getImage,
   getSettings, getSetting, setSetting, upsertSettings,
   getAdmin, updateAdminPassword,
 };

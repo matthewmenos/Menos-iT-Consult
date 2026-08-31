@@ -275,9 +275,26 @@ function tipEmail({ subject, message }, ctx) {
   return { html, text };
 }
 
+// Replaces newsletter placeholders with a subscriber's own data. Unused/unknown
+// tokens are left empty (and invisible) rather than breaking the email.
+function personalize(str, sub) {
+  const map = {
+    '{{firstName}}': sub.firstName || '',
+    '{{lastName}}':  sub.lastName || '',
+    '{{fullName}}':  sub.fullName || '',
+    '{{email}}':     sub.email || '',
+  };
+  return String(str == null ? '' : str).replace(
+    /\{\{(firstName|lastName|fullName|email)\}\}/gi,
+    (m) => map[m.toLowerCase()] || ''
+  );
+}
+
 // Sends the tip to every subscriber (or just the admin when testOnly).
 // Batched 5-at-a-time so Gmail/SMTP rate limits are respected; one bad
 // address never aborts the rest. Returns per-recipient success counts.
+// Subject + message may contain per-recipient variables ({{firstName}},
+// {{lastName}}, {{fullName}}, {{email}}) — each subscriber gets their own.
 async function sendTipEmails({ subject, message, testOnly = false }) {
   const result = {
     configured: !!getTransporter(),
@@ -291,39 +308,44 @@ async function sendTipEmails({ subject, message, testOnly = false }) {
 
   let recipients;
   if (result.testOnly) {
-    recipients = ctx.email ? [ctx.email] : [];
+    // Test send uses the contact email with generic name placeholders.
+    recipients = [{ email: ctx.email, firstName: '', lastName: '' }];
     result.testRecipient = ctx.email;
   } else {
     try {
-      recipients = (await db.getSubscribers()).map((s) => s.email);
+      recipients = await db.getSubscribers(); // full objects incl. name
     } catch (err) {
       result.error = err && err.noDb ? err.message : 'Could not load subscribers.';
       return result;
     }
   }
+  recipients = recipients.filter((s) => s && s.email);
   if (!recipients.length) { result.error = 'No recipients'; return result; }
   result.total = recipients.length;
 
   const from = `"Menos iT Consult" <${process.env.SMTP_USER}>`;
-  const content = tipEmail({ subject, message }, ctx);
   const BATCH = 5;
   for (let i = 0; i < recipients.length; i += BATCH) {
-    await Promise.all(recipients.slice(i, i + BATCH).map((to) =>
-      transporter.sendMail({
+    await Promise.all(recipients.slice(i, i + BATCH).map((sub) => {
+      const fullName = [sub.firstName, sub.lastName].filter(Boolean).join(' ').trim();
+      const person = { firstName: sub.firstName, lastName: sub.lastName, fullName, email: sub.email };
+      const subj = personalize(subject, person);
+      const content = tipEmail({ subject: subj, message: personalize(message, person) }, ctx);
+      return transporter.sendMail({
         from,
-        to,
-        subject,
+        to: sub.email,
+        subject: subj,
         html: content.html,
         text: content.text,
       }).then(
         () => { result.sent++; },
         (err) => {
           result.failed++;
-          result.errors.push({ to, error: err && err.message ? err.message : String(err) });
-          console.error(`Tip email error [${to}]:`, err && err.message ? err.message : err);
+          result.errors.push({ to: sub.email, error: err && err.message ? err.message : String(err) });
+          console.error(`Tip email error [${sub.email}]:`, err && err.message ? err.message : err);
         }
-      ))
-    );
+      );
+    }));
   }
   return result;
 }

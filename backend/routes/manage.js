@@ -10,8 +10,9 @@
  */
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
 const db = require('../db');
+const r2 = require('../r2');
+const crypto = require('crypto');
 const requireAuth = require('../middleware/auth');
 
 router.use(requireAuth);
@@ -50,6 +51,23 @@ router.post(
   async (req, res) => {
     try {
       const mime = (req.headers['content-type'] || '').split(';')[0].trim();
+      if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
+        return res.status(400).json({ error: 'Empty upload.' });
+      }
+      if (req.body.length > 4 * 1024 * 1024) {
+        return res.status(400).json({ error: 'Image too large (max 4 MB).' });
+      }
+      // R2 when configured; Postgres bytea otherwise (legacy path still works)
+      if (r2.r2Enabled()) {
+        const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+        if (!ALLOWED.includes(mime)) {
+          return res.status(400).json({ error: 'Unsupported image type. Use JPEG, PNG, WebP, GIF or AVIF.' });
+        }
+        const put = await r2.putImage(req.body, mime);
+        const id = put.key.match(/img-[a-z0-9]+/)[0];
+        const saved = await db.saveImageRef(id, mime, put.size, put.key, put.publicUrl);
+        return res.status(201).json(saved);
+      }
       const saved = await db.saveImage(req.body, mime);
       res.status(201).json(saved);
     } catch (err) {

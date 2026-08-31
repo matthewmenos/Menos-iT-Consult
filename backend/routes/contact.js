@@ -45,7 +45,16 @@ router.post('/', async (req, res) => {
     }
   }
 
-  // 2) Notify — branded confirmation to the customer + new-lead alert to the
+  // 2) Auto-subscribe to the newsletter (best-effort — never fails the form).
+  //    New subscribers get first/last name captured so admin can personalise
+  //    tips with {{firstName}} / {{lastName}} / {{fullName}} etc.
+  try {
+    await db.addSubscriber(email, firstName, lastName);
+  } catch (err) {
+    console.warn('[contact] could not add to newsletter:', err.message || err);
+  }
+
+  // 3) Notify — branded confirmation to the customer + new-lead alert to the
   //    admin, sent in parallel. Email failure never fails the form: the
   //    enquiry is already persisted, and mailer reports per-recipient status.
   const mail = await mailer.sendContactEmails(msgEntry);
