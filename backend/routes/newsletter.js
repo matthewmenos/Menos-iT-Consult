@@ -38,6 +38,11 @@ router.post('/', async (req, res) => {
     await db.addSubscriber(email);
     const total = (await db.getSubscribers()).length;
 
+    // Send the subscriber a welcome email (instant, non-blocking).
+    mailer.sendWelcomeEmail({ email }).catch((err) => {
+      console.error('Subscribe welcome email error:', err);
+    });
+
     // Notify the business
     try {
       await transporter.sendMail({

@@ -350,6 +350,78 @@ async function sendTipEmails({ subject, message, testOnly = false }) {
   return result;
 }
 
-module.exports = { sendContactEmails, resolveContactContext, getTransporter, sendTipEmails };
+// ── welcome email for new subscribers ────────────────────────────────────────
+function welcomeEmail(sub) {
+  const firstName = esc(sub.firstName || sub.email ? (sub.firstName || '').trim().split(' ')[0] : '');
+  const subject = "Welcome! You're on the Menos iT list 🎉";
+  const html = `
+    <div style="font-family:Inter,system-ui,Segoe UI,sans-serif;max-width:600px;margin:0 auto;color:#0f172a;background:#f1f5f9;padding:24px 12px">
+      <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
+        <div style="background:linear-gradient(135deg,#1a56db,#1e3a8a);padding:30px 32px;text-align:center">
+          <img src="${SITE_URL}/assets/logo.jpg" alt="Menos iT Consult" width="64" height="64" style="width:64px;height:64px;border-radius:50%;border:3px solid rgba(255,255,255,.35);display:inline-block"/>
+          <p style="color:#ffffff;margin:12px 0 0;font-size:19px;font-weight:700;letter-spacing:.2px">Menos <span style="color:#93c5fd">iT</span> Consult</p>
+        </div>
+        <div style="padding:32px">
+          <h2 style="margin:0 0 10px;font-size:21px">${firstName ? `Welcome aboard, ${firstName}! 👋` : 'Thanks for subscribing!'}</h2>
+          <p style="margin:0 0 22px;line-height:1.7;font-size:15px;color:#334155">
+            You're now on our list. You'll get a periodic email with practical IT tips
+            and insights to help your business stay secure and productive.
+          </p>
+          <p style="margin:0 0 16px;line-height:1.7;font-size:15px;color:#334155">
+            You can unsubscribe at any time using the link at the bottom of every email — no questions asked.
+          </p>
+          <p style="margin:30px 0 10px;font-size:15px;font-weight:700">What to expect</p>
+          <ul style="margin:0 0 20px;padding-left:20px;color:#334155;font-size:14px;line-height:1.7">
+            <li>Email roughly once or twice a month — never spam.</li>
+            <li>Real, actionable tips (not jargon-filled marketing).</li>
+            <li>No third-party sharing of your email address.</li>
+          </ul>
+          <a href="${SITE_URL}/blog" style="display:inline-block;background:#1a56db;color:#fff;text-decoration:none;padding:12px 26px;border-radius:10px;font-weight:600;font-size:14px">Browse the blog</a>
+        </div>
+        <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:18px 32px;text-align:center">
+          <p style="margin:0;font-size:12px;color:#94a3b8">
+            Menos iT Consult · Agona, Western Region, Ghana · +233 549 128 384
+          </p>
+        </div>
+      </div>
+    </div>`;
+  const text = [
+    "Welcome to Menos iT Consult!",
+    "",
+    "You're now on our list and will receive practical IT tips every now and then.",
+    "You can unsubscribe at any time — link is in every email.",
+    "",
+    "Browse our blog: " + SITE_URL + "/blog",
+    "",
+    "Menos iT Consult | Agona, Ghana | +233 549 128 384",
+  ].join("\n");
+  return { subject, html, text };
+}
+
+// Sends the welcome email to a single new subscriber. Non-blocking — failures
+// are logged but never break the subscription flow.
+async function sendWelcomeEmail(sub) {
+  const result = { sent: false, error: '' };
+  const transporter = getTransporter();
+  if (!transporter) { result.error = 'SMTP not configured'; return result; }
+  const mail = welcomeEmail(sub);
+  try {
+    await transporter.sendMail({
+      from: `"Menos iT Consult" <${process.env.SMTP_USER}>`,
+      to: sub.email,
+      subject: mail.subject,
+      html: mail.html,
+      text: mail.text,
+    });
+    result.sent = true;
+  } catch (err) {
+    result.error = err && err.message ? err.message : String(err);
+        console.error('Welcome email error [' + sub.email + ']:', result.error);
+  }
+  return result;
+}
+
+module.exports = { sendContactEmails, sendWelcomeEmail, resolveContactContext, getTransporter, sendTipEmails };
+
 
 
